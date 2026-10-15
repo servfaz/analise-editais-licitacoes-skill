@@ -5,3 +5,7 @@ Outputs
 files
 # macOS
 .DS_Store
+
+# Pacotes gerados da skill
+dist/
+__pycache__/

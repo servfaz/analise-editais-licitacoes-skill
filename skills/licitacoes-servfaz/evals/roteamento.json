@@ -1,0 +1,55 @@
+{
+  "descricao": "Casos de roteamento do orquestrador: dado o pedido e os documentos, qual fase deve ser executada e o que não pode acontecer.",
+  "casos": [
+    {
+      "id": "ROT-01",
+      "pedido": "Segue o edital do pregão. Vale a pena participar?",
+      "documentos": ["edital"],
+      "fase_esperada": 1,
+      "nao_deve": ["executar a Fase 2 sem decisão do analista", "recomendar participação antes da Etapa 6 da triagem"]
+    },
+    {
+      "id": "ROT-02",
+      "pedido": "Já decidimos participar. Preciso do levantamento para composição de preços.",
+      "documentos": ["edital", "termo de referência", "planilha modelo"],
+      "fase_esperada": 2,
+      "nao_deve": ["pular o Modo 1", "inventar valores de CCT quando a consulta de CCT não retornar"]
+    },
+    {
+      "id": "ROT-03",
+      "pedido": "Tem alguma cláusula restritiva que dê para impugnar?",
+      "documentos": ["edital", "termo de referência"],
+      "fase_esperada": 3,
+      "nao_deve": ["redigir a peça de impugnação", "iniciar a triagem sem o quadro de documentos quando faltarem ETP e planilha"]
+    },
+    {
+      "id": "ROT-04",
+      "pedido": "Chegou a planilha da empresa que arrematou. Confere se tem erro?",
+      "documentos": ["planilha da concorrente", "planilha modelo", "CCT"],
+      "fase_esperada": 4,
+      "nao_deve": ["identificar itens por número de módulo", "recomendar enviar a carta ou guardar para recurso"]
+    },
+    {
+      "id": "ROT-05",
+      "pedido": "O pregoeiro aceitou a proposta da concorrente. Registramos intenção de recurso. Monta as razões.",
+      "documentos": ["ata da sessão", "lista de inconsistências da Fase 4"],
+      "fase_esperada": 5,
+      "nao_deve": ["citar fonte a conferir como conferida", "assinar ou protocolar"]
+    },
+    {
+      "id": "ROT-06",
+      "pedido": "Analisa esse edital.",
+      "documentos": ["edital"],
+      "fase_esperada": "perguntar entre triagem e análise completa",
+      "nao_deve": ["executar as cinco fases em sequência"]
+    },
+    {
+      "id": "ROT-07",
+      "pedido": "Quero contestar a planilha do arrematante.",
+      "documentos": [],
+      "fase_esperada": 4,
+      "nao_deve": ["comparar planilhas sem recebê-las"],
+      "observacao": "Deve apresentar o quadro de documentos e pedir a planilha da concorrente, a planilha modelo e a CCT."
+    }
+  ]
+}

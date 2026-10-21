@@ -236,3 +236,4 @@ Durante as etapas 3 a 9, manter para cada tese um registro equivalente a este:
 - [Briefing mínimo para análise e elaboração de recurso](Briefing_Minimo.md) — entradas do analista e informações extraídas dos documentos.
 - [Documentos e fundamentação para recurso](Documentos_e_Fundamentacao_do_Recurso.md) — núcleo documental, documentos condicionais e fontes jurídicas.
 - [Análise de recursos anteriores e estrutura recomendada](Analise_Recursos_Modelo_Estrutura.md) — padrões generalizados de organização e redação; os exemplos originais não são insumos de execução da skill.
+- [Ambiente OpenWebUI: especificações e limitações](Ambiente_OpenWebUI_Especificacoes_e_Limitacoes.md) — condições confirmadas, implicações para o desenho da skill e validações técnicas pendentes.

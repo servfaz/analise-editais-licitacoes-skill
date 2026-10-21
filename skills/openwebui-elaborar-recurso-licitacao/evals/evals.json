@@ -1,0 +1,50 @@
+{
+  "skill_name": "elaborar-recurso-licitacao",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Analise os arquivos anexados sobre o lote 1. A concorrente apresentou salário abaixo da CCT na primeira versão da planilha e foi aceita depois de diligência. Há fundamento documental suficiente para pedir sua desclassificação? Se houver, prepare uma minuta; se não, explique por quê. Não faça auditoria de fórmulas/células.",
+      "expected_output": "Compara as versões da PCFP, percebe que a proposta final passou a indicar o piso exibido na CCT e que a decisão aceitou a versão após diligência sem aumento do preço; não trata a falha inicial como causa automática de desclassificação, não inventa defeito nos cálculos e conclui que o material fornecido não demonstra, por si só, base suficiente para pedir exclusão. Expõe qualquer lacuna e não redige minuta conclusiva sem tese sustentada.",
+      "expectations": [
+        "Compara a versão inicial e a versão ajustada da PCFP, considerando a versão final analisada pela Administração.",
+        "Reconhece que o salário exibido na versão final iguala o piso apresentado no trecho fictício da CCT e que o preço total não aumentou.",
+        "Não trata a falha inicial, isoladamente, como causa automática de desclassificação.",
+        "Não alega que auditou fórmulas/células nem infere insuficiência de outros custos sem evidência.",
+        "Conclui que os documentos fornecidos, por si sós, não sustentam pedido conclusivo de desclassificação; não redige minuta artificial se nenhuma tese remanescente for demonstrada.",
+        "Cita os arquivos-base e os itens/seções que sustentam as conclusões, sem atribuir paginação não fornecida."
+      ],
+      "files": [
+        "fixtures/caso_saneamento/edital.md",
+        "fixtures/caso_saneamento/cct.md",
+        "fixtures/caso_saneamento/proposta.md",
+        "fixtures/caso_saneamento/diligencia-e-decisao.md"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "A Administração aceitou a proposta da concorrente, mas a planilha dela não cobre os direitos trabalhistas e isso pode nos tirar a chance de vencer. Quero que você faça o recurso. Ainda não anexei os documentos do certame.",
+      "expected_output": "Não inventa o conteúdo da proposta, da CCT, do edital ou da decisão e não apresenta uma peça como se tivesse analisado provas. Explica que pode iniciar a análise e solicita de forma direcionada o edital/anexos pertinentes, a proposta final/PCFP e a decisão/parecer/diligência; pede CCT/ACT apenas se a alegação depender dela. Reconhece que o briefing já informa ato, problema e efeito, sem pedir esses dados novamente.",
+      "expectations": [
+        "Não apresenta minuta conclusiva como se tivesse examinado documentos que não foram anexados.",
+        "Não inventa cláusulas do edital, valores da PCFP, conteúdo de CCT ou motivos da decisão.",
+        "Pede de forma direcionada o edital/anexos pertinentes, a proposta final/PCFP e a decisão ou avaliação administrativa, incluindo diligência se existente.",
+        "Solicita instrumento coletivo somente se necessário para testar a alegação de custo trabalhista.",
+        "Não pede novamente a decisão, o problema e o efeito, que já foram informados.",
+        "Não exige que o analista reafirme a manifestação da intenção de recorrer, salvo dado contrário ou dúvida material."
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "A sessão ainda não aconteceu. O edital exige que a empresa mantenha escritório no município antes da assinatura do contrato. Quero recorrer dessa exigência e pedir a retirada da cláusula.",
+      "expected_output": "Esclarece que, antes da decisão do certame, contestar regra do edital é impugnação ou pedido de esclarecimento, não recurso contra ato administrativo. Não redige a peça sob o título de recurso; delimita a diferença e oferece ajuda no instrumento apropriado, sem presumir fundamento ou prazo sem examinar o edital e o regime.",
+      "expectations": [
+        "Identifica que, antes de decisão do certame e diante de uma exigência do edital, o instrumento não é recurso contra decisão administrativa.",
+        "Distingue recurso de impugnação do edital ou pedido de esclarecimento.",
+        "Não redige uma peça intitulada recurso para contestar a cláusula editalícia.",
+        "Não afirma fundamento jurídico ou prazo concreto sem examinar edital, regime e datas."
+      ],
+      "files": []
+    }
+  ]
+}

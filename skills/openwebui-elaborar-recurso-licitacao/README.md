@@ -1,0 +1,31 @@
+# Skill: elaborar recurso em licitação
+
+Pacote de Skill para OpenWebUI, com instruções em português para analisar e apoiar a elaboração de recursos administrativos em licitações de serviços com dedicação exclusiva de mão de obra.
+
+## Conteúdo
+
+- `SKILL.md` — fluxo operacional e controles essenciais.
+- `references/documentos-e-fundamentacao.md` — documentos por tipo de tese, regime jurídico e fontes oficiais de partida.
+- `references/estrutura-e-redacao.md` — estrutura da minuta e padrões de redação generalizados do estudo de peças anteriores.
+- `references/ambiente-openwebui.md` — compatibilidade, recursos opcionais e validações técnicas.
+
+Os documentos originais examinados em `files/recursos` não fazem parte deste pacote e não são necessários para executar a Skill.
+
+## Importação por versão
+
+### OpenWebUI 0.11.4
+
+Use [elaborar-recurso-licitacao-openwebui-0.11.4.md](elaborar-recurso-licitacao-openwebui-0.11.4.md), que contém em um único Markdown as instruções e orientações que, no pacote modular, ficam em `references/`. Na versão 0.11.4, abra **Workspace > Skills > Import** e selecione o `.md`; confira nome e descrição, depois salve a Skill. A importação de Markdown é tratada no [código dessa versão](https://github.com/open-webui/open-webui/blob/v0.11.4/src/lib/components/workspace/Skills.svelte#L252-L309). Conceda acesso de leitura aos analistas que a utilizarão.
+
+### OpenWebUI 0.12.0 ou posterior
+
+O pacote ZIP modular pode ser usado a partir da primeira versão em que confirmei suporte no código, 0.12.0: essa versão inclui `.zip` no seletor de importação e interpreta os arquivos do pacote. Confira a [implementação de importação no código da versão 0.12.0](https://github.com/open-webui/open-webui/blob/v0.12.0/src/lib/components/workspace/Skills.svelte#L351-L367) e a [documentação oficial atual](https://docs.openwebui.com/features/workspace/skills/). Como sempre, valide na instalação concreta.
+
+Para qualquer versão, selecione a Skill no chat usando `$` ou o menu de integrações. Para o modelo ler documentos de apoio de um pacote modular, habilite ferramentas nativas/Skills e function calling quando disponíveis. Confirme se Web Search funciona no modelo e chat efetivos; teste com PDF pesquisável e planilha representativos antes do uso operacional. A variante Docker (`standard` ou `:slim`) e os extratores ativos ainda precisam ser confirmados.
+
+## Estado das integrações
+
+- Web Search: habilitado segundo informação da equipe; verificar no modelo/chat efetivo.
+- MCP do TCU: previsto, ainda não implementado; a Skill não depende dele.
+- Geração de `.docx` com timbre: depende de ferramenta e modelo próprios ainda a desenvolver; esta versão entrega Markdown.
+- Modelo atual: Google Flash 3.8 via proxy; confirmar o identificador e testar o uso real de ferramentas nessa rota.

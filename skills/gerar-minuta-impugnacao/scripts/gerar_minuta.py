@@ -33,6 +33,7 @@ from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Cm, Pt
 
 
+# === núcleo: a Tool do Open WebUI é montada com este trecho (build/montar_tool.py); não use nada de fora dele ===
 class Refusal(Exception):
     """Entrada que não pode virar minuta; a mensagem diz o que corrigir."""
 
@@ -46,8 +47,6 @@ INTERNAL = re.compile(r'\b(?:EXT|INT|NOVA)-[A-Z0-9]|\[[^\]\n]*·[^\]\n]*\]|cat[a
 STYLES = {'corpo': 'Peca Corpo', 'titulo': 'Peca Titulo', 'subtitulo': 'Peca Subtitulo', 'citacao': 'Peca Citacao',
           'alinea': 'Peca Alinea', 'centro': 'Peca Centro', 'tabela': 'Peca Tabela'}
 ROMAN_NUMBERING, ALINEA_NUMBERING = 'PecaSecao', 'PecaAlinea'
-TIMBRE = Path(__file__).resolve().parents[1] / 'assets' / 'timbre-servfaz.docx'
-DADOS = Path(__file__).resolve().parents[1] / 'assets' / 'dados-servfaz.json'
 MESES = ('janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro',
          'novembro', 'dezembro')
 # Rótulo do "[Inserir ...]" (sem acento, minúsculo) -> chave de dados-servfaz.json.
@@ -237,23 +236,8 @@ def build(doc, text):
 
 # Campo em branco: não barra a geração; sai em destaque no .docx e entra na lista de pendências.
 PENDENTE = re.compile(r'\{\{[^}\n]*\}\}|\[(?:inserir|preencher|informar|data|nome|cnpj|cpf|endere[cç]o)\b[^\]\n]*\]', re.I)
-Resultado = namedtuple('Resultado', 'docx pendentes')
 # Marcação que o conversor não trata. Remissões como [1] passam: vão ao .docx como estão.
 UNSUPPORTED = re.compile(r'^\s*```|^#{5,}\s|!\[[^\]\n]*\]\(|\[[^\]\n]+\]\([^)\n]+\)|</?[a-z][^>\n]*>|~~', re.I)
-
-
-def load_dados(path):
-    """Dados padrão da Servfaz e de quem assina; sem o arquivo, nada é preenchido."""
-    path = Path(path)
-    if not path.is_file():
-        return {}
-    try:
-        dados = json.loads(path.read_text(encoding='utf-8'))
-    except ValueError as exc:
-        raise Refusal(f'{path.name} não é um JSON válido: {exc}.') from exc
-    if not isinstance(dados, dict) or not all(isinstance(v, str) for v in dados.values()):
-        raise Refusal(f'{path.name} deve ser um objeto com valores em texto (veja dados-servfaz.exemplo.json).')
-    return dados
 
 
 def preencher(text, dados, when=None):
@@ -269,7 +253,8 @@ def preencher(text, dados, when=None):
 
 
 def check_clean(text, label):
-    """A trava: a minuta não sai com referência interna da triagem nem marcação que o conversor não trata. Cada achado leva a linha, para o analista corrigir o Markdown."""
+    """A trava: a minuta não sai com referência interna da triagem nem marcação que o conversor não trata.
+    Cada achado leva a linha, para o analista corrigir o Markdown."""
     problems = []
     for number, line in enumerate(text.split('\n'), 1):
         for regex, what in ((INTERNAL, 'referência interna'),
@@ -289,19 +274,46 @@ def pendencias(text):
     return [(number, found[0]) for number, line in enumerate(text.split('\n'), 1) for found in PENDENTE.finditer(line)]
 
 
+def render(text, timbre, dados=None, when=None, label='a minuta'):
+    """Markdown -> (Document, pendências). `timbre` é o caminho ou o arquivo aberto do timbre .docx; `dados` é o
+    dicionário de preenchimento (chaves de CAMPOS); `when` é a data da peça."""
+    text = preencher(unicodedata.normalize('NFC', text), dados or {}, when)
+    check_clean(text, label)
+    text = FRONT.sub('', text, count=1)
+    doc = Document(timbre)
+    build(doc, text)
+    return doc, pendencias(text)
+# === fim do núcleo ===
+
+
+TIMBRE = Path(__file__).resolve().parents[1] / 'assets' / 'timbre-servfaz.docx'
+DADOS = Path(__file__).resolve().parents[1] / 'assets' / 'dados-servfaz.json'
+Resultado = namedtuple('Resultado', 'docx pendentes')
+
+
+def load_dados(path):
+    """Dados padrão da Servfaz e de quem assina; sem o arquivo, nada é preenchido."""
+    path = Path(path)
+    if not path.is_file():
+        return {}
+    try:
+        dados = json.loads(path.read_text(encoding='utf-8'))
+    except ValueError as exc:
+        raise Refusal(f'{path.name} não é um JSON válido: {exc}.') from exc
+    if not isinstance(dados, dict) or not all(isinstance(v, str) for v in dados.values()):
+        raise Refusal(f'{path.name} deve ser um objeto com valores em texto (veja dados-servfaz.exemplo.json).')
+    return dados
+
+
 def convert(source, target=None, timbre=TIMBRE, dados=None, when=None):
     source = Path(source)
-    text = unicodedata.normalize('NFC', source.read_text(encoding='utf-8'))
-    text = preencher(text, load_dados(dados or DADOS), when)
-    check_clean(text, source.name)
-    text = FRONT.sub('', text, count=1)
     if not Path(timbre).is_file():
         raise Refusal(f'timbre não encontrado ({timbre}): gere-o com criar_timbre.py.')
-    doc = Document(str(timbre))
-    build(doc, text)
+    doc, pendentes = render(source.read_text(encoding='utf-8'), str(timbre), load_dados(dados or DADOS), when,
+                            source.name)
     target = Path(target) if target else source.with_suffix('.docx')
     doc.save(str(target))
-    return Resultado(target, pendencias(text))
+    return Resultado(target, pendentes)
 
 
 def main(argv=None):

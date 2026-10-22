@@ -1,11 +1,12 @@
 # Skill: elaborar recurso em licitação
 
-Pacote de Skill para OpenWebUI, com instruções em português para analisar e apoiar a elaboração de recursos administrativos em licitações de serviços com dedicação exclusiva de mão de obra. O fluxo da Fase 5 aceita tanto a passagem de achados da Fase 4 (com validação nos documentos primários) quanto o acionamento direto por briefing e anexos.
+Pacote de Skill para OpenWebUI, com instruções em português para analisar e apoiar a elaboração de recursos administrativos em licitações de serviços com dedicação exclusiva de mão de obra. O fluxo da Fase 5 aceita tanto a passagem de achados da Fase 4 (com validação nos documentos primários) quanto o acionamento direto por briefing e anexos. As regras gerais têm precedência explícita e cobrem rastreabilidade, literalidade, evidência, pertinência das fontes, decisão humana, privacidade e cobertura documental.
 
 ## Conteúdo
 
 - `SKILL.md` — fluxo operacional e controles essenciais.
-- `references/documentos-e-fundamentacao.md` — documentos por tipo de tese, regime jurídico e fontes oficiais de partida.
+- `references/documentos-e-fundamentacao.md` — documentos por tipo de tese, regime jurídico e orientação para seleção de fontes.
+- `references/catalogo-de-fontes.md` — catálogo amplo de fontes herdado da versão anterior, pesquisadas e com existência confirmada; selecione-as conforme a tese e o regime do certame.
 - `references/estrutura-e-redacao.md` — estrutura da minuta e padrões de redação generalizados do estudo de peças anteriores.
 - `references/ambiente-openwebui.md` — compatibilidade, recursos opcionais e validações técnicas.
 

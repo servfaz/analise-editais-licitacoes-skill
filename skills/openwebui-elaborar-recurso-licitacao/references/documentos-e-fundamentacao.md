@@ -2,6 +2,8 @@
 
 Use esta referência para selecionar os arquivos necessários à hipótese concreta. Não transforme a lista em exigência universal: peça ou procure documentos adicionais apenas quando sua ausência impedir testar a tese.
 
+As regras gerais de precedência, literalidade e rastreabilidade estão no início de `SKILL.md`. As fontes do catálogo foram pesquisadas e sua existência foi confirmada. Selecione as referências adequadas ao regime e à tese, e vincule cada citação aos fatos e aos documentos do caso.
+
 Quando a análise vier da Fase 4, use os achados e seus localizadores para priorizar a leitura, mas confirme cada um nos documentos primários. A lista herdada não é prova autônoma, nem dispensa a busca de evidências contrárias. Em acionamento direto, a análise parte do briefing e dos anexos disponíveis, sem exigir uma saída anterior da Fase 4.
 
 ## Documentos-base
@@ -34,16 +36,8 @@ Quando a análise vier da Fase 4, use os achados e seus localizadores para prior
 3. Confira a norma legal e regulamentar na fonte oficial e na redação vigente pertinente ao certame. Dispositivos da Lei nº 14.133/2021 (entre eles arts. 5º, 17, 59, 62–70 e 165), IN SEGES/MP nº 5/2017 e Decreto nº 12.174/2024 só são pertinentes conforme o assunto e seu âmbito de aplicação.
 4. Em matéria trabalhista, não presuma que a Administração pode impor a CCT escolhida por uma parte. Verifique edital, declaração, categoria, território, vigência e normas aplicáveis. O Acórdão 1207/2024-TCU-Plenário é referência a consultar quando pertinente, não uma resposta pronta para qualquer caso.
 5. Para jurisprudência ou súmulas, pesquise em fonte oficial, leia a decisão/trecho pertinente, confirme número, ano, colegiado, contexto e legislação aplicável, verifique precedentes posteriores ou contrários e explique a aderência fática. Separe decisão acolhida, relatório, voto e alegação da parte. Não diga “entendimento pacífico/consolidado” por encontrar um resultado isolado.
-6. Não invente conteúdo quando fonte oficial estiver indisponível. Registre termos/bases consultados quando isso for útil e classifique precedentes como “candidato” ou “inteiro teor conferido”. Não cite fonte apenas por constar nesta lista: abra e confira a fonte pertinente no caso concreto antes de apoiar nela uma conclusão.
+6. Use o catálogo como repertório de fontes já pesquisadas, não como lista de teses automáticas. Não invente dispositivos, precedentes ou conteúdo; cite a fonte e o trecho que efetivamente amparam a proposição, indicando sua relação com o regime e os fatos do certame. A validação da tese deve decorrer da comparação entre regra, evidência, contraponto e efeito.
 
-## Fontes oficiais de partida
+## Catálogo amplo de fontes
 
-- [Lei nº 14.133/2021 — Planalto](https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm)
-- [Lei nº 13.303/2016 — Planalto](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/lei/l13303.htm)
-- [IN SEGES/MP nº 5/2017 — Compras.gov.br](https://www.gov.br/compras/pt-br/acesso-a-informacao/legislacao/instrucoes-normativas/instrucao-normativa-no-5-de-26-de-maio-de-2017-atualizada)
-- [Decreto nº 12.174/2024 — Planalto](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/decreto/d12174.htm)
-- [Acórdão 1207/2024-TCU-Plenário — pesquisa oficial](https://pesquisa.apps.tcu.gov.br/documento/acordao-completo/%2A/NUMACORDAO%253A1207%2520ANOACORDAO%253A2024%2520COLEGIADO%253A%2522Plen%25C3%25A1rio%2522/DTRELEVANCIA%2520desc/0)
-- [Pesquisa de jurisprudência do TCU](https://portal.tcu.gov.br/jurisprudencia)
-- [Registro de instrumentos coletivos — Ministério do Trabalho e Emprego](https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/mediacao/registro-de-convencoes-e-acordo-coletivo-de-trabalho)
-
-As fontes são ponto de partida, não catálogo completo. Confirme sempre se o endereço continua ativo, se a norma está atualizada e se a regra alcança o órgão e o período do certame.
+Consulte [`catalogo-de-fontes.md`](catalogo-de-fontes.md) para o inventário completo herdado do levantamento anterior, com normas, jurisprudência, bases, documentos internos e fontes de mercado. O inventário cobre várias fases; não use todas as entradas automaticamente. Selecione apenas o que se relacionar com a decisão, o objeto e a tese do recurso. As fontes catalogadas tiveram sua existência pesquisada e confirmada; na minuta, cite a autoridade, o dispositivo/trecho e o localizador pertinentes.

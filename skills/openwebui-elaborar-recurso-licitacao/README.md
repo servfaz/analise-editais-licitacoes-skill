@@ -28,5 +28,5 @@ Para qualquer versão, selecione a Skill no chat usando `$` ou o menu de integra
 
 - Web Search: habilitado segundo informação da equipe; verificar no modelo/chat efetivo.
 - MCP do TCU: previsto, ainda não implementado; a Skill não depende dele.
-- Geração de `.docx` com timbre: depende de ferramenta e modelo próprios ainda a desenvolver; esta versão entrega Markdown.
+- Geração de `.docx` com timbre: disponível no pacote complementar `skills/openwebui-gerar-minuta-impugnacao`. Em produção, use a Action **Exportar Minuta de Impugnacao Servfaz**, que exporta apenas o bloco Markdown revisado após confirmação humana; mantenha a ferramenta legada desabilitada no modelo.
 - Modelo atual: Google Flash 3.8 via proxy; confirmar o identificador e testar o uso real de ferramentas nessa rota.

@@ -51,6 +51,8 @@ Use a sequência **regra → evidência → comparação → consequência → p
 4. Relacione o achado à decisão ou ao resultado da disputa.
 5. Proponha medida compatível com a fase e com o grau de prova.
 
+Quando a tese vier da lista produzida na Fase 4, confira o achado nos documentos citados antes de redigi-lo. Se a fonte primária não confirmar a síntese, corrija ou descarte o ponto e explique a divergência. Uma conclusão transferida de fase continua sendo hipótese até essa validação.
+
 Use um subtítulo por questão material (por exemplo, proposta/PCFP, habilitação ou diligência). Não misture desclassificação da proposta e inabilitação como se fossem a mesma consequência. Se o pedido depender de nova análise, convocação ou julgamento posterior, não afirme que a recorrente será automaticamente vencedora.
 
 ## Padrões a preservar
@@ -60,6 +62,7 @@ Use um subtítulo por questão material (por exemplo, proposta/PCFP, habilitaç�
 - Síntese cronológica curta, limitada aos fatos que ajudam a compreender a decisão e as teses.
 - Fundamentos separados por assunto, apoiados por prova e regra específica.
 - Citações documentais precisas: arquivo, página/cláusula/item; para planilhas, aba/linha/rubrica quando disponíveis. Se página ou localização não puder ser conferida, diga isso.
+- Separação explícita entre fato documentado, inferência analítica e lacuna; não apresente inferência como declaração literal nem use localizador que não foi conferido.
 - Pedidos principal e subsidiário somente quando pertinentes e sustentados.
 - Fecho formal com os campos ainda sujeitos a preenchimento destacados, sem simular assinatura.
 - Linguagem direta, profissional e proporcional; evite repetição, adjetivação e princípios genéricos sem vínculo com a controvérsia.
@@ -73,7 +76,8 @@ Use um subtítulo por questão material (por exemplo, proposta/PCFP, habilitaç�
 - Não declare que duas hipóteses jurídicas são incompatíveis ou que determinado método de cálculo é obrigatório sem norma ou precedente conferido e aderente ao período/caso.
 - Não trate erro de preenchimento como desclassificação automática; examine saneamento, diligência, preço final e impacto conforme as regras aplicáveis.
 - Se a prova sustenta pedido de esclarecimento, diligência ou revisão técnica — e não a exclusão da concorrente — recomende a providência proporcional, explicando a diferença.
+- Minimize a exposição de dados pessoais e empresariais: inclua na minuta apenas os identificadores necessários ao ato e à identificação das partes; não encaminhe informação sensível a buscas externas sem necessidade.
 
 ## Revisão final
 
-Antes de apresentar a minuta, confira: identidade das partes; órgão, número, objeto, item/lote e ato contestado; datas e prazo; transcrições; referências; distinção entre fato e inferência; análise de evidências contrárias; regime e alcance de cada norma/precedente; correspondência entre tese, efeito e pedido; e marcadores de informação pendente. Uma alegação material sem trilha documental deve ser removida ou claramente condicionada.
+Antes de apresentar a minuta, confira: identidade das partes; órgão, número, objeto, item/lote e ato contestado; datas e prazo; transcrições e localizadores; distinção entre fato, inferência e lacuna; validação dos achados herdados da Fase 4; análise de evidências contrárias; regime e alcance de cada norma/precedente; correspondência entre tese, efeito e pedido; minimização de dados pessoais; e marcadores de informação pendente. Uma alegação material sem trilha documental deve ser removida ou claramente condicionada.

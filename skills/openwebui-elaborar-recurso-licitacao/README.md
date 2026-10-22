@@ -1,6 +1,6 @@
 # Skill: elaborar recurso em licitação
 
-Pacote de Skill para OpenWebUI, com instruções em português para analisar e apoiar a elaboração de recursos administrativos em licitações de serviços com dedicação exclusiva de mão de obra.
+Pacote de Skill para OpenWebUI, com instruções em português para analisar e apoiar a elaboração de recursos administrativos em licitações de serviços com dedicação exclusiva de mão de obra. O fluxo da Fase 5 aceita tanto a passagem de achados da Fase 4 (com validação nos documentos primários) quanto o acionamento direto por briefing e anexos.
 
 ## Conteúdo
 

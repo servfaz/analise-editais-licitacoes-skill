@@ -2,6 +2,8 @@
 
 Use esta referência para selecionar os arquivos necessários à hipótese concreta. Não transforme a lista em exigência universal: peça ou procure documentos adicionais apenas quando sua ausência impedir testar a tese.
 
+Quando a análise vier da Fase 4, use os achados e seus localizadores para priorizar a leitura, mas confirme cada um nos documentos primários. A lista herdada não é prova autônoma, nem dispensa a busca de evidências contrárias. Em acionamento direto, a análise parte do briefing e dos anexos disponíveis, sem exigir uma saída anterior da Fase 4.
+
 ## Documentos-base
 
 | Documento | Quando é central | O que verificar |
@@ -23,7 +25,7 @@ Use esta referência para selecionar os arquivos necessários à hipótese concr
 - **Diligência/saneamento:** solicitação, resposta/documentos juntados, decisão e regra aplicável.
 - **Amostra, prova de conceito ou execução técnica:** critério editalício, resultado de teste, laudo, catálogo ou relatório pertinente.
 - **Planejamento ou justificativa de exigência:** ETP, pesquisa de preços, orçamento, mapa de riscos e parecer jurídico podem ser úteis, mas não são requisitos universais para um recurso de mérito.
-- **Cronologia, intenção ou tratamento desigual:** ata, chat, registro da plataforma ou log somente quando o fato correspondente for controvertido e influenciar admissibilidade ou mérito.
+- **Cronologia, intenção ou tratamento desigual:** ata, chat, registro da plataforma ou log somente quando o fato correspondente for controvertido e influenciar admissibilidade ou mérito. A ausência desses registros não interrompe automaticamente a análise; delimite a lacuna e prossiga nos pontos testáveis com as demais fontes.
 
 ## Regime jurídico e pesquisa
 
@@ -32,7 +34,7 @@ Use esta referência para selecionar os arquivos necessários à hipótese concr
 3. Confira a norma legal e regulamentar na fonte oficial e na redação vigente pertinente ao certame. Dispositivos da Lei nº 14.133/2021 (entre eles arts. 5º, 17, 59, 62–70 e 165), IN SEGES/MP nº 5/2017 e Decreto nº 12.174/2024 só são pertinentes conforme o assunto e seu âmbito de aplicação.
 4. Em matéria trabalhista, não presuma que a Administração pode impor a CCT escolhida por uma parte. Verifique edital, declaração, categoria, território, vigência e normas aplicáveis. O Acórdão 1207/2024-TCU-Plenário é referência a consultar quando pertinente, não uma resposta pronta para qualquer caso.
 5. Para jurisprudência ou súmulas, pesquise em fonte oficial, leia a decisão/trecho pertinente, confirme número, ano, colegiado, contexto e legislação aplicável, verifique precedentes posteriores ou contrários e explique a aderência fática. Separe decisão acolhida, relatório, voto e alegação da parte. Não diga “entendimento pacífico/consolidado” por encontrar um resultado isolado.
-6. Não invente conteúdo quando fonte oficial estiver indisponível. Registre termos/bases consultados quando isso for útil e classifique precedentes como “candidato” ou “inteiro teor conferido”.
+6. Não invente conteúdo quando fonte oficial estiver indisponível. Registre termos/bases consultados quando isso for útil e classifique precedentes como “candidato” ou “inteiro teor conferido”. Não cite fonte apenas por constar nesta lista: abra e confira a fonte pertinente no caso concreto antes de apoiar nela uma conclusão.
 
 ## Fontes oficiais de partida
 

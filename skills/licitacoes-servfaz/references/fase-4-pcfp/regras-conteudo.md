@@ -56,11 +56,11 @@ Estas são as regras que a Fase 4 aplica na extração de critérios (etapa 1) e
 | Vale-transporte | Lei 7.418/1985 | Custo é a tarifa × viagens × dias menos o desconto de até 6% do salário-base |
 | Sistema S, salário-educação, INCRA | Tabela FPAS | Alíquotas conforme o código FPAS da atividade de serviço; não usar alíquotas de indústria |
 
-As fontes acima vêm do material interno da Servfaz (`briefing/Mapeamento_Analise/Planilha de Custos`). Antes de citar dispositivo legal ou súmula na carta, confira o status em `references/catalogo-de-fontes.md`.
+As fontes acima vêm do estudo interno da Servfaz sobre planilha de custos (`references/estudo/planilha/estrutura.md` e `references/estudo/planilha/analise.md`), útil também para localizar onde cada item costuma aparecer. Antes de citar dispositivo legal ou súmula na carta, confira o status em `references/estudo/catalogo-fontes.md`.
 
 ## Nota sobre a base de cálculo dos tributos (opção 3)
 
-Quando o edital não define explicitamente a base de cálculo dos tributos, a Fase 4 apresenta três opções fixas ao analista (ver `references/fase-4-pcfp.md`, etapa 1, passo 4). As opções 1 e 2 fornecem um parâmetro concreto e permitem que o fluxo continue. A opção 3 não fornece parâmetro nenhum — ela significa que o fluxo deve aguardar resposta do órgão antes de seguir para a segunda entrada.
+Quando o edital não define explicitamente a base de cálculo dos tributos, a Fase 4 apresenta três opções fixas ao analista (ver `references/fase-4-pcfp/instrucoes.md`, etapa 1, passo 4). As opções 1 e 2 fornecem um parâmetro concreto e permitem que o fluxo continue. A opção 3 não fornece parâmetro nenhum — ela significa que o fluxo deve aguardar resposta do órgão antes de seguir para a segunda entrada.
 
 Isso não torna a opção 3 automaticamente a escolha "mais segura". Em algumas licitações, o time comercial omite deliberadamente esse questionamento formal ao órgão como estratégia competitiva — perguntar pode chamar atenção indesejada para um ponto que a empresa prefere resolver de outra forma, ou atrasar o processo além do que vale a pena. Por isso, ao apresentar essa opção ao analista, explique o trade-off (perguntar formalmente ganha segurança jurídica mas pode ter custo competitivo/de tempo) em vez de apresentar apenas o rótulo da opção. A escolha final continua sendo do analista.
 

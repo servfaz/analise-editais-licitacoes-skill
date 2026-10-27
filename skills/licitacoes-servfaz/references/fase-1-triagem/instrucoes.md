@@ -2,7 +2,7 @@
 
 > ⚠️ Triagem é uma leitura preliminar de decisão (seguir/descartar). **Não substitui** a
 > análise completa do edital nem o parecer jurídico. Toda decisão de "seguir" deve ser
-> seguida da análise aprofundada (Fase 2, `references/fase-2-analise-edital.md`).
+> seguida da análise aprofundada (Fase 2, `references/fase-2-analise-edital/instrucoes.md`).
 > **Nunca presuma** dados ausentes: se um ponto não constar, marque "Não localizado / verificar".
 
 > 🚫 **Regra inviolável (fundamentação jurídica) — vale para todas as etapas:** **não invente**
@@ -285,6 +285,6 @@ com a separação de fontes acima. Esta é a decisão que preenche o quadro **Re
 
 | Recurso | Link |
 |---------|------|
-| Análise aprofundada (próximo passo) | Fase 2, `references/fase-2-analise-edital.md` |
+| Análise aprofundada (próximo passo) | Fase 2, `references/fase-2-analise-edital/instrucoes.md` |
 | Lei 14.133/2021 | [planalto.gov.br](https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm) |
 | PNCP — busca de editais | [pncp.gov.br/app/editais](https://pncp.gov.br/app/editais) |

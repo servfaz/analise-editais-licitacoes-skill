@@ -8,6 +8,7 @@ A skill descreve **o que** precisa, nunca o nome de uma ferramenta específica. 
 | **Leitura de documentos** | Extrair texto e tabelas de PDF, DOCX e XLSX enviados, preservando página, aba e célula | Todas | Pedir o texto ou o arquivo em formato legível; não concluir sobre o que não foi lido |
 | **Busca no conjunto documental** | Localizar trechos em editais longos já indexados | 1, 2, 3 | Ler o documento integralmente |
 | **Pesquisa jurídica oficial** | Conferir lei no Planalto e jurisprudência no portal do TCU | 3, 4, 5 | Manter a fonte como `a conferir` e sinalizar validação jurídica humana |
+| **Exportação da minuta de impugnação em .docx** | Gerar o Word timbrado da Servfaz a partir do bloco `minuta-servfaz` aprovado | 3 | Entregar o Markdown delimitado para o analista formatar |
 
 ## Como usar a consulta de CCT
 
@@ -18,9 +19,11 @@ A skill descreve **o que** precisa, nunca o nome de uma ferramenta específica. 
 
 ## Referência por ambiente
 
-| Ambiente | Consulta de CCT | Leitura de documentos | Pesquisa jurídica |
+| Ambiente | Consulta de CCT | Exportação .docx (impugnação) | Pesquisa jurídica |
 | --- | --- | --- | --- |
-| Claude (claude.ai / Claude Code) | Conector MCP do RAG de CCTs da Servfaz | Leitura nativa de anexos | Busca web, quando habilitada |
-| Open WebUI | Tool ou conector MCP do mesmo RAG | Anexos do chat ou Tool de indexação | Busca web, quando habilitada |
+| Claude (claude.ai / Claude Code) | Conector MCP do RAG de CCTs da Servfaz | Skill de documentos Word, quando disponível | Busca web, quando habilitada |
+| Open WebUI | Servidor MCP `servfaz-rag` | Action **Exportar Minuta de Impugnacao Servfaz** | Web Search; MCP do TCU quando implantado |
+
+A exportação nunca altera o texto aprovado e só ocorre por decisão do analista. Recurso ainda não tem exportação própria: entregue Markdown e não use o conversor de impugnação.
 
 Esta tabela é informativa. A skill não depende dela: o modelo escolhe a ferramenta pela capacidade descrita acima.

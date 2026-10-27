@@ -22,11 +22,11 @@ Use os documentos enviados e a pergunta. O executivo não precisa saber o nome d
 
 | Sinal na conversa | Fase | Arquivo |
 | --- | --- | --- |
-| Edital novo; "vale participar?", "triar", "bater o olho" | 1. Triagem | `references/fase-1-triagem.md` |
-| Decidiu seguir; "analisar edital", "composição de preços", "habilitação", "parecer" | 2. Análise do edital | `references/fase-2-analise-edital.md` |
-| "Impugnar", "esclarecimento", "cláusula restritiva", prazo de impugnação | 3. Impugnação | `references/fase-3-impugnacao.md` e `references/fase-3-temas-e-exemplos.md` |
-| Chegou a planilha do arrematante; "PCFP", "planilha da concorrente", "carta ao pregoeiro" | 4. PCFP | `references/fase-4-pcfp.md` e `references/fase-4-pcfp-regras.md` |
-| "Intenção de recurso", "razões", decisão do pregoeiro a contestar | 5. Recurso | `references/fase-5-recurso.md` |
+| Edital novo; "vale participar?", "triar", "bater o olho" | 1. Triagem | `references/fase-1-triagem/instrucoes.md` |
+| Decidiu seguir; "analisar edital", "composição de preços", "habilitação", "parecer" | 2. Análise do edital | `references/fase-2-analise-edital/instrucoes.md` |
+| "Impugnar", "esclarecimento", "cláusula restritiva", prazo de impugnação | 3. Impugnação | `references/fase-3-impugnacao/instrucoes.md` |
+| Chegou a planilha do arrematante; "PCFP", "planilha da concorrente", "carta ao pregoeiro" | 4. PCFP | `references/fase-4-pcfp/instrucoes.md` e `references/fase-4-pcfp/regras-conteudo.md` |
+| "Intenção de recurso", "razões", decisão do pregoeiro a contestar | 5. Recurso | `references/fase-5-recurso/instrucoes.md` |
 
 Regras de roteamento:
 
@@ -43,6 +43,8 @@ Em toda fase, comece com uma tabela curta: documento, status (**presente**, **au
 
 Leia o arquivo da fase e siga-o integralmente. Arquivos de outras fases só são lidos quando a fase atual mandar.
 
+O estudo de documentos em `references/estudo/` (estrutura, análise e mapa de fontes de edital, TR, ETP, planilha, pesquisa de preços e minuta, mais o catálogo de fontes) é compartilhado por todas as fases. Leia só o arquivo do documento e do ponto em exame, nunca a pasta inteira.
+
 ## 4. Passar o resultado adiante
 
 O resultado de uma fase é entrada da seguinte. Na mesma conversa, reaproveite o que já foi extraído e confira na fonte em vez de extrair de novo:
@@ -52,6 +54,7 @@ O resultado de uma fase é entrada da seguinte. Na mesma conversa, reaproveite o
 | Fase 1 | Fase 2 | Pontos de atenção, dados não localizados |
 | Fase 1 ou 2 | Fase 3 | Esclarecimentos e impugnações candidatos, prazo de impugnação |
 | Fase 2 | Fase 4 | CCT, benefícios, encargos, conta vinculada, insalubridade, base de cálculo dos tributos |
+| Fase 3 | Exportação | Minuta aprovada no bloco delimitado, para gerar o .docx (ver `references/capacidades.md`) |
 | Fase 4 | Fase 5 | Lista de inconsistências reais com fontes |
 
 ## 5. Encerrar cada fase

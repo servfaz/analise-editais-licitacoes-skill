@@ -18,35 +18,46 @@ class BuildSkillTest(unittest.TestCase):
     def tearDown(self):
         self.temporary.cleanup()
 
+    def write_skill(self, skill_text, references=None):
+        skill_dir = self.output_dir / "skill-teste"
+        (skill_dir / "references").mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text(skill_text, encoding="utf-8")
+        for relative_path, content in (references or {}).items():
+            target = skill_dir / "references" / relative_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8")
+        return skill_dir
+
     def test_every_cited_reference_exists(self):
         self.assertEqual(build_skill.find_missing_references(self.skill_dir), [])
 
-    def test_claude_package_contains_skill_and_references(self):
-        archive_path = build_skill.build_claude_package(self.skill_dir, self.output_dir)
+    def test_every_phase_has_instructions(self):
+        for phase in ["fase-1-triagem", "fase-2-analise-edital", "fase-3-impugnacao", "fase-4-pcfp", "fase-5-recurso"]:
+            self.assertTrue((self.skill_dir / "references" / phase / "instrucoes.md").is_file(), phase)
+
+    def test_package_keeps_nested_references(self):
+        archive_path = build_skill.build_package(self.skill_dir, self.output_dir)
         with zipfile.ZipFile(archive_path) as archive:
             names = set(archive.namelist())
         self.assertIn("licitacoes-servfaz/SKILL.md", names)
-        expected_references = {f"licitacoes-servfaz/references/{path.name}" for path in (self.skill_dir / "references").glob("*.md")}
-        self.assertTrue(expected_references <= names)
+        self.assertIn("licitacoes-servfaz/references/estudo/edital/fontes.md", names)
+        self.assertNotIn("licitacoes-servfaz/README.md", names)
 
-    def test_openwebui_files_are_self_contained(self):
-        written = build_skill.build_openwebui_package(self.skill_dir, self.output_dir)
-        self.assertEqual(len(written), 1 + len(build_skill.PHASE_BUNDLES))
-        for path in written:
-            content = path.read_text(encoding="utf-8")
-            self.assertTrue(content.startswith("---\nname: licitacoes-servfaz"))
-            self.assertIsNone(build_skill.REFERENCE_PATTERN.search(content), path.name)
+    def test_nested_reference_resolves(self):
+        skill_dir = self.write_skill("Leia `references/fase-1/instrucoes.md`.", {"fase-1/instrucoes.md": "# Fase 1\n"})
+        self.assertEqual(build_skill.find_missing_references(skill_dir), [])
 
-    def test_full_openwebui_file_keeps_every_phase(self):
-        full = build_skill.build_openwebui_package(self.skill_dir, self.output_dir)[0].read_text(encoding="utf-8")
-        for phase_number in range(1, 6):
-            self.assertIn(f"# Fase {phase_number} ", full)
+    def test_placeholder_path_is_not_a_reference(self):
+        skill_dir = self.write_skill("Abra `references/estudo/<documento>/fontes.md`.")
+        self.assertEqual(build_skill.find_missing_references(skill_dir), [])
+
+    def test_oversized_document_is_reported(self):
+        skill_dir = self.write_skill("# Skill\n", {"grande.md": "x" * 30})
+        self.assertEqual(build_skill.find_oversized_documents(skill_dir, limit=20), [("references/grande.md", 30)])
 
     def test_main_rejects_missing_reference(self):
-        broken_dir = self.output_dir / "quebrada"
-        (broken_dir / "references").mkdir(parents=True)
-        (broken_dir / "SKILL.md").write_text("---\nname: x\n---\nLeia `references/inexistente.md`.\n", encoding="utf-8")
-        self.assertEqual(build_skill.main(["--skill-dir", str(broken_dir), "--output-dir", str(self.output_dir)]), 1)
+        skill_dir = self.write_skill("Leia `references/inexistente.md`.")
+        self.assertEqual(build_skill.main(["--skill-dir", str(skill_dir), "--output-dir", str(self.output_dir)]), 1)
 
 
 if __name__ == "__main__":

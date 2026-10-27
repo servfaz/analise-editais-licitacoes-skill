@@ -1,56 +1,45 @@
 # licitacoes-servfaz
 
-Skill única do processo comercial de licitações da Servfaz, do edital ao recurso. Fonte única para Claude e Open WebUI: o conteúdo fica aqui e `scripts/build_skill.py` gera o pacote de cada ambiente.
+Skill única do processo comercial de licitações da Servfaz, do edital ao recurso. A mesma pasta serve ao Claude e ao Open WebUI (0.12 ou posterior, que importa pacotes com `references/`).
 
 ## Estrutura
 
-| Arquivo | Conteúdo | Origem |
+| Caminho | Conteúdo | Origem |
 | --- | --- | --- |
 | `SKILL.md` | Orquestrador: identifica a fase, abre com o quadro de documentos, passa o resultado adiante | novo |
-| `references/regras-gerais.md` | Regras comuns a todas as fases | consolidado de `SKILL.md`, `SKILL_triagem.md` e da skill de impugnação |
-| `references/capacidades.md` | Contrato de ferramentas por capacidade (CCT, leitura, pesquisa jurídica) | novo |
-| `references/fase-1-triagem.md` | Triagem (seguir/descartar) | `SKILL_triagem.md` |
-| `references/fase-2-analise-edital.md` | Levantamento para composição de preços e parecer | `SKILL.md` |
-| `references/fase-3-impugnacao.md` e `fase-3-temas-e-exemplos.md` | Hipóteses de impugnação e esclarecimento | `skills/impugnacao-editais-tcu` |
-| `references/fase-4-pcfp.md` e `fase-4-pcfp-regras.md` | PCFP da concorrente e carta ao pregoeiro | skill `analise-pcfp` |
-| `references/fase-5-recurso.md` | Recurso administrativo (versão inicial) | novo |
-| `references/catalogo-de-fontes.md` | Status das fontes legais | `briefing/Mapeamento_Analise/01 - Catalogo de Fontes.md` |
+| `references/regras-gerais.md` | Regras comuns a todas as fases | consolidado das skills de origem |
+| `references/capacidades.md` | Contrato de ferramentas por capacidade (CCT, leitura, pesquisa jurídica, exportação .docx) | novo |
+| `references/fase-1-triagem/` | Triagem (seguir ou descartar) | `SKILL_triagem.md` |
+| `references/fase-2-analise-edital/` | Levantamento para composição de preços e parecer | `SKILL.md` da raiz |
+| `references/fase-3-impugnacao/` | Triagem de impugnação, seleção de pontos e minuta para a Action de .docx | `skills/openwebui-impugnacao` (branch `tools/comercial`, commit `f05948b`) |
+| `references/fase-4-pcfp/` | PCFP da concorrente e carta ao pregoeiro | skill `analise-pcfp` |
+| `references/fase-5-recurso/` | Análise e minuta de recurso | `skills/openwebui-elaborar-recurso-licitacao` (mesmo commit) |
+| `references/estudo/` | Estrutura, análise e mapa de fontes de cada documento, catálogo e índice de fontes, compartilhados por todas as fases | `skills/openwebui-impugnacao/references` |
 | `evals/roteamento.json` | Casos de teste do roteamento | novo |
 
-## Ajustes em relação às skills de origem
+## Decisões da unificação
 
-- **Ferramenta de CCT:** a referência à ferramenta `Conhecimento Servfaz` foi substituída pela capacidade "consulta de CCT", atendida pelo RAG de CCTs via MCP em qualquer ambiente.
-- **RAT ajustado pelo FAP:** a regra da PCFP passou a comparar o RAT ajustado (0,5% a 6%), não o FAP (multiplicador de 0,5 a 2,0).
-- **Estrutura da PCFP:** a saída sem inconsistências voltou para o passo 4 da etapa 2.
-- **Regras de tributos e encargos:** a PCFP ganhou as regras do briefing de planilha de custos.
-- **Carta da PCFP:** passou a exigir a fonte de cada critério e o status da fonte no catálogo.
-- **Pontos marcados `[a validar]` em `fase-4-pcfp-regras.md`:** faixa da conta vinculada (qual rubrica) e plano de saúde no DF. Dependem do time comercial.
+- **Catálogo único:** `references/estudo/catalogo-fontes.md`, a versão conferida nas fontes oficiais. A Fase 5 deixou de usar o catálogo próprio, que era uma versão anterior sem status. Saíram dele `EXT-BASE-PAINELPRECOS` (retirado do estudo), `EXT-IN5-2014` (só histórica) e `EXT-TCU-INFO2026-INDICES` (substituído na revisão do catálogo).
+- **Status das fontes:** `conferido` fundamenta peça depois de reaberta a fonte oficial; `a conferir` só como pendência (ver `references/regras-gerais.md`).
+- **Fase 3:** a versão de impugnação para Open WebUI substituiu a antiga `impugnacao-editais-tcu`. A versão de Claude Code com scripts (`skills/impugnacoes-triagem`) continua separada, porque depende de pasta local e de Python.
+- **Pontos `[a validar]`** em `references/fase-4-pcfp/regras-conteudo.md`: faixa da conta vinculada e plano de saúde no DF.
 
-As skills de origem continuam no repositório e devem ser retiradas depois que esta for validada, para que o modelo não escolha entre versões concorrentes.
+As skills de origem continuam no repositório. Depois de validar esta, retire-as dos modelos e das contas para que não concorram com ela.
 
-## Gerar os pacotes
+## Validar e empacotar
 
 ```bash
 python3 scripts/build_skill.py
 python3 -m unittest scripts/test_build_skill.py
 ```
 
-Saída em `dist/` (não versionado):
-
-| Arquivo | Uso |
-| --- | --- |
-| `dist/claude/licitacoes-servfaz.zip` | Claude: pasta com `SKILL.md` e `references/`, carregadas sob demanda |
-| `dist/openwebui/licitacoes-servfaz.md` | Open WebUI: arquivo único com todas as fases (~143 KB, todo injetado no contexto) |
-| `dist/openwebui/licitacoes-servfaz-fase-N-*.md` | Open WebUI: uma skill por fase (50 a 80 KB), mais leve |
-
-No Open WebUI a skill é importada como um único Markdown, sem `references/`. O build converte cada `references/x.md` em "a seção «Título» deste documento" ou, no pacote por fase, em "a skill `licitacoes-servfaz-fase-N`".
+O script falha se algum `references/...` citado não existir e avisa sobre arquivos acima de 20.000 caracteres, o limite padrão de leitura de Skills no Open WebUI. Gera `dist/licitacoes-servfaz.zip` com `SKILL.md` e `references/`; README e evals ficam fora do pacote.
 
 ## Instalar
 
-**Claude:** envie o `.zip` em Configurações > Capacidades > Skills para teste individual. Para o time, o administrador da organização publica a skill para todos. A consulta de CCT exige o conector MCP do RAG de CCTs adicionado nos conectores da conta.
-
-**Open WebUI:** em Workspace > Skills, importe o `.md` desejado (ver `skills/openwebui-impugnacao-editais-tcu/README.md`, seção 3). Cadastre o servidor MCP do RAG de CCTs como ferramenta externa e habilite-o no modelo. Use um modelo com chamada de ferramentas em modo Native.
+- **Claude:** Configurações > Capacidades > Skills > enviar o `.zip`.
+- **Open WebUI:** Workspace > Skills > importar o `.zip` ou importar por link. Se o repositório for privado, o servidor do Open WebUI precisa de acesso ao link. Configuração do agente em `deploy/openwebui/agente-analista-licitacoes.md`.
 
 ## Manutenção
 
-Edite apenas os arquivos desta pasta. Todo arquivo de `references/` precisa começar com um título `# ` único, que o build usa como nome da seção. Nova referência citada no `SKILL.md` deve existir em `references/`; o build falha se não existir.
+Edite só esta pasta. Ao trazer novas versões das skills do time, copie para a pasta da fase e ajuste os caminhos para `references/fase-N-*/` ou `references/estudo/`; o script acusa caminho quebrado.

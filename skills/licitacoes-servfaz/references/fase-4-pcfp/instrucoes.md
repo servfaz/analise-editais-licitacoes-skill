@@ -32,7 +32,7 @@ Se o analista já chegar com tudo em mãos (edital, planilha modelo, CCT e plani
 
 1. **Converta o edital para markdown.** Remova cabeçalho e rodapé repetidos em cada página, mas mantenha todo o restante do texto sem alterar uma palavra, e formate as tabelas corretamente. Depois de converter, confira o número de linhas e colunas de cada tabela extraída contra o PDF original — um erro de tabela aqui contamina toda a extração de regras que vem a seguir, então vale a pena essa checagem antes de seguir.
 
-2. **Extraia os critérios de julgamento do edital**, identificando cada um pelo conteúdo semântico (ver `references/fase-4-pcfp-regras.md` para as categorias e o que procurar em cada uma). Essa extração fica parcial nesta etapa: falta a CCT, que só chega na etapa 2, então itens que dependem dela (vale-alimentação, auxílio-creche, etc.) ficam marcados como pendentes.
+2. **Extraia os critérios de julgamento do edital**, identificando cada um pelo conteúdo semântico (ver `references/fase-4-pcfp/regras-conteudo.md` para as categorias e o que procurar em cada uma). Essa extração fica parcial nesta etapa: falta a CCT, que só chega na etapa 2, então itens que dependem dela (vale-alimentação, auxílio-creche, etc.) ficam marcados como pendentes.
 
 3. **Verifique documentos referenciados e não enviados.** Se o edital citar um documento anexo (decreto, anexo remissivo) que não foi enviado junto, pare e peça esse documento ao analista antes de prosseguir. Quando ele chegar, reprocesse a conversão do edital incluindo esse documento — não pule direto para a extração de critérios com informação faltando.
 
@@ -41,7 +41,7 @@ Se o analista já chegar com tudo em mãos (edital, planilha modelo, CCT e plani
    - **Opção 2:** a base de cálculo incide apenas sobre a remuneração, com os encargos dos demais itens calculados em linhas separadas (modelo usado por empresas responsáveis por hospitais federais).
    - **Opção 3:** pausar e registrar necessidade de questionamento formal ao órgão antes de prosseguir.
 
-   Ao apresentar essas opções, inclua a nota de contexto que está em `references/fase-4-pcfp-regras.md` sobre o trade-off da opção 3 — ela não é sempre a mais segura do ponto de vista comercial, e quem responde precisa saber disso, não só ler o rótulo. Se a opção 3 for escolhida, não force uma continuação: registre que o fluxo aguarda resposta do órgão e pare a etapa 1 aqui. Se for a opção 1 ou 2, esse é o parâmetro de cálculo usado na etapa 2.
+   Ao apresentar essas opções, inclua a nota de contexto que está em `references/fase-4-pcfp/regras-conteudo.md` sobre o trade-off da opção 3 — ela não é sempre a mais segura do ponto de vista comercial, e quem responde precisa saber disso, não só ler o rótulo. Se a opção 3 for escolhida, não force uma continuação: registre que o fluxo aguarda resposta do órgão e pare a etapa 1 aqui. Se for a opção 1 ou 2, esse é o parâmetro de cálculo usado na etapa 2.
 
 5. Com o documento faltante resolvido (se houve) e a base de cálculo definida (opção 1 ou 2), a etapa 1 está concluída. Resuma para o analista: os critérios extraídos até aqui, o que ainda depende da CCT, e o parâmetro de base de cálculo escolhido.
 
@@ -51,13 +51,13 @@ Esta etapa só começa quando a concorrente arrematante reapresenta a planilha d
 
 **Entrada esperada:** a CCT aplicável e a planilha do concorrente.
 
-1. **Complete os critérios pendentes da etapa 1 usando a CCT** — os itens que dependiam dela (valor de referência do vale-alimentação, exigência ou não de auxílio-creche, e outros listados em `references/fase-4-pcfp-regras.md`). Use a capacidade de consulta de CCT descrita em `references/capacidades.md`; se ela não estiver disponível ou não retornar a CCT, use a CCT enviada pelo analista e registre a pendência de validação.
+1. **Complete os critérios pendentes da etapa 1 usando a CCT** — os itens que dependiam dela (valor de referência do vale-alimentação, exigência ou não de auxílio-creche, e outros listados em `references/fase-4-pcfp/regras-conteudo.md`). Use a capacidade de consulta de CCT descrita em `references/capacidades.md`; se ela não estiver disponível ou não retornar a CCT, use a CCT enviada pelo analista e registre a pendência de validação.
 
 2. **Compare a planilha do concorrente com a planilha modelo, item a item, por conteúdo semântico** — não por posição/linha. Trate como o mesmo item dois valores que representam a mesma coisa mesmo que estejam em linhas ou módulos diferentes entre as duas planilhas.
 
 3. **Julgue cada diferença encontrada contra os critérios completos**, classificando-a como:
    - **Inconsistência real** — viola um critério (valor fixo divergente sem justificativa, fora da faixa de tolerância, base de cálculo não condizente com o parâmetro definido na etapa 1, etc.)
-   - **Variação aceitável** — dentro de faixa de tolerância documentada (ex.: RAT ajustado pelo FAP entre 0,5% e 6%; demais faixas em `references/fase-4-pcfp-regras.md`) ou justificada por diferença legítima de estratégia/regime.
+   - **Variação aceitável** — dentro de faixa de tolerância documentada (ex.: RAT ajustado pelo FAP entre 0,5% e 6%; demais faixas em `references/fase-4-pcfp/regras-conteudo.md`) ou justificada por diferença legítima de estratégia/regime.
 
    Preste atenção especial ao padrão mais comum apontado pelo time: concorrentes mudando a base de cálculo dos tributos para conseguir um preço menor, sem manter a mesma referência — isso é o tipo de inconsistência que mais embasa contestação.
 
@@ -76,7 +76,7 @@ Não existe template fixo para a carta — ela é sempre gerada a partir da list
 - Tom formal e respeitoso, dirigido ao pregoeiro.
 - Vai no corpo do e-mail, não como documento anexo separado — o time técnico do órgão já sabe localizar os pontos indicados no corpo do texto.
 - Organizada como listagem das inconsistências identificadas, cada uma explicando objetivamente o que diverge e por quê (o critério, não o número do módulo).
-- Cite a fonte de cada critério (edital, CCT, comprovante) conforme `references/regras-gerais.md`. Fundamento legal só entra se constar do material ou de `references/catalogo-de-fontes.md` com status conferido; caso contrário, omita ou marque como pendente de validação jurídica.
+- Cite a fonte de cada critério (edital, CCT, comprovante) conforme `references/regras-gerais.md`. Fundamento legal só entra se constar do material ou de `references/estudo/catalogo-fontes.md` com status conferido; caso contrário, omita ou marque como pendente de validação jurídica.
 - Não inclua nenhuma recomendação sobre enviar a carta ou guardá-la para recurso — isso é decisão humana, fora do escopo desta fase.
 
 ## Etapa 3: validação e decisão final (fora do escopo automatizado)
@@ -85,4 +85,4 @@ Depois de gerar a lista de inconsistências e o rascunho, o trabalho desta fase 
 
 ## Referências
 
-- `references/fase-4-pcfp-regras.md` — as categorias semânticas de itens da planilha (remuneração, benefícios, encargos sociais, tributos), a fonte de cada critério (CCT, edital, comprovante) e a regra de julgamento, mais a nota de contexto completa sobre o trade-off da opção 3 da base de cálculo. Consulte sempre que for extrair critérios ou julgar uma diferença — é a base de todo o julgamento da etapa 2.
+- `references/fase-4-pcfp/regras-conteudo.md` — as categorias semânticas de itens da planilha (remuneração, benefícios, encargos sociais, tributos), a fonte de cada critério (CCT, edital, comprovante) e a regra de julgamento, mais a nota de contexto completa sobre o trade-off da opção 3 da base de cálculo. Consulte sempre que for extrair critérios ou julgar uma diferença — é a base de todo o julgamento da etapa 2.

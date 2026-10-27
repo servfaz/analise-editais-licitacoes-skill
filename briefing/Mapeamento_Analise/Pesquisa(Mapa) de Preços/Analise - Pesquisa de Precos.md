@@ -33,9 +33,9 @@ Este é o vício clássico apontado em operações da Polícia Federal e auditor
 
 #### Como cruzar e demonstrar na impugnação:
 
-- **Cruzamento:** Confronte o **Volume Licitado no TR vs. Contratações Similares** registradas no **Painel de Preços do Governo Federal** e no **Portal Nacional de Contratações Públicas (PNCP)** — são sistemas distintos; consulte os dois.
+- **Cruzamento:** Confronte o **Volume Licitado no TR vs. Contratações Similares** registradas na **Pesquisa de Preços do Compras.gov.br** e no **Portal Nacional de Contratações Públicas (PNCP)** — são sistemas distintos; consulte os dois. (O antigo Painel de Preços deixou de ser atualizado em 04/07/2025.)
 - **A Prova:** Mostre que compras públicas do mesmo porte (dezenas de milhares de unidades) foram homologadas em outros órgãos com valor menor (exemplo ilustrativo, sem fonte: 30% a 50%) por aplicarem a **economia de escala**.
-- **Fundamento Jurídico:** Art. 23, caput, da Lei 14.133/2021, que manda observar "a potencial economia de escala" na estimativa do valor (fundamento principal), combinado com o § 1º. A Súmula nº 177 do TCU trata da definição do objeto, e o Acórdão nº 2.637/2015-Plenário, segundo fonte secundária, trata de pesquisa restrita a poucos fornecedores; use-os só como reforço, depois de conferidos (a conferir).
+- **Fundamento Jurídico:** Art. 23, caput, da Lei 14.133/2021, que manda observar "a potencial economia de escala" na estimativa do valor (fundamento principal), combinado com o § 1º. A Súmula nº 177 do TCU trata da definição do objeto, e o Acórdão nº 2.637/2015-Plenário trata de pesquisa restrita a poucos fornecedores; use-os só como reforço.
 
 ---
 
@@ -74,17 +74,17 @@ Nem todo erro na pesquisa serve para gerar sobrepreço; muitas vezes o erro serv
 
 ---
 
-### 5. Inobservância da Prioridade Regulamentar de Fontes (Ignorar o Painel de Preços)
+### 5. Inobservância da Prioridade Regulamentar de Fontes (Ignorar os Bancos de Dados Públicos)
 
 #### Onde o erro se esconde:
 
-- **"Fuga" dos bancos de dados públicos:** A Lei 14.133/2021 manda considerar os bancos de dados públicos (art. 23, caput), mas o § 1º permite adotar os parâmetros de forma combinada ou não, sem ordem obrigatória para bens e serviços. A prioridade ao Painel de Preços e às contratações similares (parâmetros I e II) vem, na esfera federal, da IN SEGES/ME 65/2021 (art. 5º, § 1º) (a conferir); em estados e municípios, verifique o regulamento do ente. Muitas vezes o servidor ignora essas bases e vai direto a 3 empresas locais amigas para colher orçamentos inflados, sem justificar por que não utilizou os bancos de dados públicos.
+- **"Fuga" dos bancos de dados públicos:** A Lei 14.133/2021 manda considerar os bancos de dados públicos (art. 23, caput), mas o § 1º permite adotar os parâmetros de forma combinada ou não, sem ordem obrigatória para bens e serviços. A prioridade aos sistemas oficiais de preços e às contratações similares (parâmetros I e II) vem, na esfera federal, da IN SEGES/ME 65/2021 (art. 5º, § 1º); em estados e municípios, verifique o regulamento do ente. Muitas vezes o servidor ignora essas bases e vai direto a 3 empresas locais amigas para colher orçamentos inflados, sem justificar por que não utilizou os bancos de dados públicos.
 
 #### Como cruzar e demonstrar na impugnação:
 
-- **Cruzamento:** Entre no **Painel de Preços do Governo Federal (paineldeprecos.planejamento.gov.br)** e pesquise o mesmo item (usando o código CATMAT/CATSER).
+- **Cruzamento:** Entre na **Pesquisa de Preços do Compras.gov.br (pesquisaprecos.compras.gov.br)** e pesquise o mesmo item (usando o código CATMAT/CATSER). O Painel de Preços, citado em materiais antigos, deixou de ser atualizado em 04/07/2025.
 - **A Prova:** Mostre que existem dezenas de contratações recentes de outros órgãos para o mesmo objeto registradas no sistema oficial por valores substancialmente menores, as quais foram arbitrariamente ignoradas pelo órgão promotor da licitação.
-- **Fundamento Jurídico:** Art. 23, caput e § 1º, I e II, da Lei 14.133/2021; IN SEGES/ME nº 65/2021, art. 5º, § 1º (esfera federal) (a conferir); Acórdão nº 1.445/2015-Plenário do TCU, que deu prioridade ao Comprasnet e às contratações similares, ainda sob a IN 5/2014 (a conferir).
+- **Fundamento Jurídico:** Art. 23, caput e § 1º, I e II, da Lei 14.133/2021; IN SEGES/ME nº 65/2021, art. 5º, § 1º (esfera federal); Acórdão nº 1.445/2015-Plenário do TCU, que deu prioridade ao Comprasnet e às contratações similares, ainda sob a IN 5/2014.
 
 ---
 
@@ -98,7 +98,7 @@ Ao auditar o Mapa de Preços, verifique:
 [ ] 3. Os preços respeitam os limites de antiguidade (contratações similares até 1 ano; cotações diretas até 6 meses — art. 23, § 1º, II e IV)?
 [ ] 4. Foi usado preço de varejo para compra em grande escala?
 [ ] 5. Há preços discrepantes ("outliers") que deveriam ter sido expurgados da média?
-[ ] 6. O órgão consultou o Painel de Preços e o PNCP ou usou apenas orçamentos diretos?
+[ ] 6. O órgão consultou os sistemas oficiais de preços (Pesquisa de Preços do Compras.gov.br) e o PNCP ou usou apenas orçamentos diretos?
 ```
 
 Se você marcar **SIM** para qualquer uma dessas anomalias, você tem os elementos necessários para protocolar uma **impugnação técnica com pedido de anulação ou retificação do orçamento estimado**.

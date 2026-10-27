@@ -95,7 +95,7 @@ Para cada seção do TR, analisaremos:
 
 #### Como cruzar informações:
 
-- **Confronte TR vs. Orçamento:** Tudo o que o TR exige como obrigação da contratada deve ter correspondente na Planilha de Custos. Cláusula aberta sem quantitativo impede que licitantes façam ofertas comparáveis e transparentes (violação do art. 18, IV — orçamento com composições de preços —, do art. 6º, XXIII, "i" (a conferir) — estimativa do valor com memória de cálculo — e do princípio do julgamento objetivo, art. 5º da Lei 14.133).
+- **Confronte TR vs. Orçamento:** Tudo o que o TR exige como obrigação da contratada deve ter correspondente na Planilha de Custos. Cláusula aberta sem quantitativo impede que licitantes façam ofertas comparáveis e transparentes (violação do art. 18, IV — orçamento com composições de preços —, do art. 6º, XXIII, "i" — estimativa do valor com memória de cálculo — e do princípio do julgamento objetivo, art. 5º da Lei 14.133).
 
 ---
 
@@ -110,8 +110,8 @@ Para cada seção do TR, analisaremos:
 
 - **Confronte TR vs. Art. 41, II e Art. 67, § 2º da Lei 14.133:**
   - Na fase de julgamento, a amostra só é lícita para o **licitante provisoriamente vencedor** (art. 41, parágrafo único), e não para todos de antemão. **Exceção:** o art. 41, II admite amostra na pré-qualificação permanente (ver também art. 17, § 3º).
-  - A vedação de aceitar apenas atestados emitidos por pessoas jurídicas de direito público (atestados de clientes particulares têm igual validade) vem da jurisprudência (fundamento jurisprudencial a localizar). Atenção: o art. 67, § 5º trata de outro tema — **permite** exigir experiência de até 3 anos em serviços contínuos.
-  - O **art. 67, § 2º** veda fixar tempo ou local para comprovação de experiência. A **Súmula nº 263 do TCU** (a conferir) não é fundamento dessa vedação: ela admite exigir quantitativos mínimos proporcionais nas parcelas de maior relevância.
+  - A vedação de aceitar apenas atestados emitidos por pessoas jurídicas de direito público (atestados de clientes particulares têm igual validade) tem base na lei (art. 37, XXI da CF; art. 9º, I, "a" e art. 67, II da Lei 14.133/2021) e no Guia de Licitações e Contratos do TCU (item 5.5.2: atestados de pessoa jurídica de direito público ou privado). O TCU já deu ciência dessa impropriedade no Acórdão 2.971/2016-1ª Câmara (sob a Lei 8.666) e, no Acórdão 2.215/2026-Plenário, considerou irregular limitar os emissores de atestados sem motivação técnica. Atenção: o art. 67, § 5º trata de outro tema — **permite** exigir experiência de até 3 anos em serviços contínuos.
+  - O **art. 67, § 2º** veda fixar tempo ou local para comprovação de experiência. A **Súmula nº 263 do TCU** não é fundamento dessa vedação: ela admite exigir quantitativos mínimos proporcionais nas parcelas de maior relevância.
 
 ---
 

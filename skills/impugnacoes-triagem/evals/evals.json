@@ -1,0 +1,66 @@
+{
+  "skill_name": "impugnacoes-triagem",
+  "evals": [
+    {
+      "id": 1,
+      "name": "slz-levantamento",
+      "prompt": "Preciso triar para impugnação o edital do Pregão Eletrônico SRP nº 90.150/2025 da Prefeitura de São Luís (serviços de vigilância). Os arquivos (edital e anexos) estão em {INPUTS}/slz. Hoje é 2026-10-20. Guarde a triagem em {OUTPUTS}/triagens. Já adianto a resposta ao portão documental: se faltar só a pesquisa de preços, \"prossigo sem PESQUISA\"; se faltarem a planilha estimada e a pesquisa, \"prossigo sem PLANILHA e PESQUISA\". Quero o levantamento das possíveis impugnações e pedidos de esclarecimento.",
+      "expected_output": "Portão registrado com a frase exata do analista; prazo calculado com alerta de prazo vencido (abertura em 2025); documentos.md, mapa-secoes.md e levantamento.md gravados; itens IMP/ESC com localizador de página, trecho literal, regra do estudo e fontes por ID do catálogo; itens registrados no estado; para no pedido de seleção, sem minuta e sem peça.",
+      "files": [
+        "inputs/slz/*.pdf"
+      ],
+      "assertions": [
+        "Pasta da triagem com estado.json válido (estado.py validar sem violações)",
+        "Fase final \"selecao\": itens registrados e aguardando a escolha do analista",
+        "Prosseguir registrado com uma das frases literais do analista",
+        "Prazo registrado e marcado como vencido (abertura em 2025)",
+        "levantamento.md com pelo menos 3 itens IMP/ESC",
+        "Todo item IMP/ESC traz localizador com página",
+        "Todo ID EXT-/INT- citado no levantamento existe no catálogo",
+        "Nenhuma minuta escrita e nenhum PDF gerado",
+        "Levantamento cobre o tema da peça do analista: parcelamento/agrupamento do objeto em lotes",
+        "Resposta pede a seleção no formato fixo (incluo / descarto / deixo para depois)",
+        "Sem dado pessoal (e-mail, CPF, telefone) nos arquivos produzidos"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "semed-portao",
+      "prompt": "Quero saber o que dá para impugnar no edital do SRP nº 90.099/2025 da SEMED São Luís. O material que tenho está em {INPUTS}/semed-sem-anexos. Hoje é 2026-10-20. Guarde a triagem em {OUTPUTS}/triagens.",
+      "expected_output": "Só o relatório do portão: o que falta (TR, ETP, planilha, pesquisa, minuta, conforme o conteúdo), o efeito de cada falta, o prazo, e a pergunta com a frase exata \"prossigo sem ...\"; nenhum levantamento, nenhum item registrado, fase documentos.",
+      "files": [
+        "inputs/semed-sem-anexos/editalpdf-1760704064.pdf"
+      ],
+      "assertions": [
+        "documentos.md gravado com o resultado do portão",
+        "Portão registrado com faltas que incluem TR e MINUTA",
+        "Fase permanece \"documentos\" (sem prosseguir registrado)",
+        "Nenhum levantamento: sem levantamento.md e sem itens registrados",
+        "Resposta mostra a frase exata \"prossigo sem ...\" com exatamente as faltas registradas",
+        "Resposta explica o efeito das faltas (TR e minuta)",
+        "Resposta informa o prazo para impugnar",
+        "Sem dado pessoal (e-mail, CPF, telefone) nos arquivos produzidos"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "selecao-primeira-minuta",
+      "prompt": "Retomando a triagem da Prefeitura Municipal de Exemplo, PE 7/2026, que está em {OUTPUTS}/triagens/prefeitura-municipal-de-exemplo-pe-7-2026 (o material fictício do edital está em {OUTPUTS}/material). Hoje é 2026-10-20. Vi a tabela de itens. Minha decisão: incluo IMP-01, IMP-03 e ESC-02; descarto os demais. Pode fazer as minutas.",
+      "expected_output": "Seleção registrada com a frase literal; só a minuta IMP-01 é aberta, escrita (Fatos, Fundamentação, Pedido com redação retificadora, fontes por ID) e registrada; apresentada com o checklist de auditoria e a pergunta nos formatos fixos com o ID; nenhuma outra minuta, nenhuma peça ou PDF; validar OK.",
+      "files": [
+        "seed-selecao/"
+      ],
+      "assertions": [
+        "Seleção registrada com a frase literal do analista",
+        "Decisões corretas: IMP-01, IMP-03 e ESC-02 incluídos; IMP-02 e ESC-01 descartados",
+        "Exatamente uma minuta escrita: minutas/IMP-01.md",
+        "IMP-01 em revisão e registrada (sha256 no estado)",
+        "Minuta com Dos fatos, Da fundamentação e Do pedido",
+        "Minuta traz redação retificadora sugerida",
+        "Todo ID EXT-/INT- citado na minuta existe no catálogo",
+        "Resposta pede a decisão nos formatos fixos com o ID (aprovo / ajuste / descarto IMP-01)",
+        "Nenhum PDF ou peça gerados e validar sem violações"
+      ]
+    }
+  ]
+}

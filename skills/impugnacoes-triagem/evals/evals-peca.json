@@ -1,0 +1,61 @@
+{
+ "skill_name": "impugnacoes-triagem",
+ "evals": [
+  {
+   "id": 1,
+   "name": "fase5-impugnacao-completa",
+   "prompt": "Retomando a triagem da FMS Teresina, PE 111/2026, que está em {OUTPUTS}/triagens/fundacao-municipal-de-saude-de-teresina-pe-111-2026 (o edital está em {OUTPUTS}/material). Hoje é 2026-10-20. Todas as minutas foram aprovadas e quero fechar as peças. confirmo a peça de impugnação em formato único. confirmo a peça de esclarecimento em formato único. Sobre os opcionais da impugnação: somos a atual prestadora, então inclua esse parágrafo; inclua também a seção de saneamento e republicação; não quero efeito suspensivo, nem pedido de prova documental, nem o protesto. O setor responsável é a Diretoria de Compras Públicas da FMS.",
+   "expected_output": "As duas confirmações registradas com as frases literais; dados-peca.json com dados tirados do edital (UASG 977337, item 19.1, endereço da FMS, destinatário só pelo cargo) e os opcionais exatamente como o analista disse; peca-impugnacao.md e peca-esclarecimento.md montadas, sem referência ao catálogo; nenhum .docx ainda (falta o ok do analista); a resposta apresenta a peça montada e pede a conferência.",
+   "assertions": [
+    "Confirmação da peça de impugnação e de esclarecimento registradas com as frases literais",
+    "dados-peca.json com UASG 977337, item 19.1 e endereço da FMS tirados do edital",
+    "Destinatário só pelo cargo, sem nome de servidor",
+    "Opcionais exatamente como o analista escolheu (atual_prestadora e republicacao true; os outros false)",
+    "Peças de impugnação e de esclarecimento montadas em peca/",
+    "Peça de impugnação com quadro resumo, tópico III.1 e o parágrafo da atual prestadora",
+    "Nenhuma referência ao catálogo (ID, marcador [· ], \"catálogo de fontes\") nas peças",
+    "Nenhum .docx gerado antes do ok do analista",
+    "Resposta apresenta a peça montada e pede a conferência do analista",
+    "validar sem violações"
+   ],
+   "files": [
+    "seed-fase5/"
+   ]
+  },
+  {
+   "id": 2,
+   "name": "fase5-conversao",
+   "prompt": "Triagem da FMS Teresina, PE 111/2026, em {OUTPUTS}/triagens/fundacao-municipal-de-saude-de-teresina-pe-111-2026. Hoje é 2026-10-20. Conferi as duas peças montadas na pasta peca/ e estão ok, pode gerar os .docx.",
+   "expected_output": "Os dois .docx gerados ao lado das peças montadas, sem alterar as peças .md, as minutas nem o estado; a resposta informa os caminhos e lembra que assinatura e protocolo são do analista.",
+   "assertions": [
+    "peca-impugnacao.docx e peca-esclarecimento.docx gerados em peca/",
+    "Os .docx usam o timbre (cabeçalho com imagem) e os estilos da peça",
+    "Peças .md, minutas e estado.json inalterados",
+    "Nenhuma referência ao catálogo no texto dos .docx",
+    "Resposta informa os caminhos dos .docx e não diz que assinou, protocolou ou enviou",
+    "validar sem violações"
+   ],
+   "files": [
+    "seed-conversao/"
+   ]
+  },
+  {
+   "id": 3,
+   "name": "fase5-sem-escolhas",
+   "prompt": "Fecha a peça de impugnação da FMS Teresina, PE 111/2026 (triagem em {OUTPUTS}/triagens/fundacao-municipal-de-saude-de-teresina-pe-111-2026, edital em {OUTPUTS}/material). Hoje é 2026-10-20. confirmo a peça de impugnação em formato único. Os opcionais você escolhe o que achar melhor, confio em você.",
+   "expected_output": "Confirmação da impugnação registrada; nenhuma peça montada; a skill não escolhe os opcionais: pergunta ao analista cada um dos cinco; pede os dados do representante (arquivo ausente); pergunta o formato da peça de esclarecimento; nenhum .docx.",
+   "assertions": [
+    "Confirmação da peça de impugnação registrada com a frase literal",
+    "Nenhuma peça montada em peca/ e nenhum .docx",
+    "Nenhum opcional marcado true ou false pela skill sem resposta do analista",
+    "Resposta pergunta ao analista sobre cada um dos cinco opcionais",
+    "Resposta pede os dados do representante (nome, cargo, designação)",
+    "Resposta pergunta o formato da peça de esclarecimento",
+    "validar sem violações"
+   ],
+   "files": [
+    "seed-sem-rep/"
+   ]
+  }
+ ]
+}

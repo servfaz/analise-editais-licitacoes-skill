@@ -44,8 +44,8 @@ Abaixo estão os **6 maiores grupos de erros, fraudes e omissões** que costumam
 #### Como cruzar e impugnar:
 
 - **Cruzamento:** Verifique a fórmula da célula da Multa do FGTS no arquivo Excel/PDF da planilha.
-- **Fundamento:** Art. 12 da Lei nº 13.932/2019, que extinguiu os 10% adicionais. O STF (Tema 846) declarou a contribuição constitucional no período anterior à extinção (fonte secundária). A manutenção da alíquota extinta gera **sobrepreço no orçamento de referência**.
-- **Aviso prévio nas prorrogações:** Sobre a provisão do aviso prévio em contratos prorrogados, ver o Acórdão 58/2026-TCU-Plenário (fonte secundária, a conferir).
+- **Fundamento:** Art. 12 da Lei nº 13.932/2019, que extinguiu os 10% adicionais. O STF (Tema 846) declarou a contribuição constitucional no período anterior à extinção. A manutenção da alíquota extinta gera **sobrepreço no orçamento de referência**.
+- **Aviso prévio nas prorrogações:** O aviso prévio trabalhado não se repete integralmente nas prorrogações. Na esfera federal, a Nota Técnica SEI 35883/2026/MGI recomenda 1,94% no 1º ano e 0,83% a cada prorrogação em que o empregado permanecer alocado; o Acórdão 1186/2017-Plenário (até 0,194% por ano de prorrogação) é a regra anterior. Planilha que repete os 1,94% nas prorrogações gera **sobrepreço**; planilha de contrato federal que zera o aviso ou usa só 0,194% fica **subestimada**. Fora da União, conferir a regra do ente.
 - **Conta vinculada:** Em dedicação exclusiva, o art. 121, § 3º da Lei 14.133/2021 permite conta vinculada e pagamento direto de verbas trabalhistas inadimplidas. Cruze as provisões de rescisão do Módulo 3 com o mecanismo previsto na minuta.
 
 ---
@@ -62,7 +62,7 @@ Este é um dos erros técnicos mais comuns em serviços com dedicação exclusiv
 #### Como cruzar e impugnar:
 
 - **Cruzamento:** Confronte as fórmulas matemáticas dos **Submódulos 2.1 (provisão de férias) e 4.1-A (substituto nas férias)**.
-- **Fundamento:** Princípio da Economicidade. Apoio: esclarecimento do MEC, pregão 2024 (fonte secundária), que trata as duas provisões como alternativas. Acórdão nº 1.182/2020-Plenário (não localizado — a conferir). Custos em duplicidade geram orçamento inflado indevidamente.
+- **Fundamento:** Princípio da Economicidade. Apoio: Esclarecimento 09 do MEC no Pregão Eletrônico 90011/2024, que trata as duas provisões como alternativas. (O Acórdão 1.182/2020-Plenário, antes citado, trata de outro assunto e não serve de fundamento.) Custos em duplicidade geram orçamento inflado indevidamente.
 
 ---
 
@@ -85,13 +85,13 @@ Este é um dos erros técnicos mais comuns em serviços com dedicação exclusiv
 #### Onde o erro se esconde:
 
 - **Inclusão Ilegal de IRPJ e CSLL (Erro Gravíssimo):** A planilha inclui linhas tributárias para o Imposto de Renda Pessoa Jurídica (IRPJ) e Contribuição Social sobre o Lucro Líquido (CSLL). O TCU já pacificou que esses tributos são de natureza personalíssima sobre o lucro líquido da empresa e **não podem ser repassados para a Administração Pública**.
-- **Alíquota de ISS de município errado:** A planilha adota a alíquota de ISS de 5%, mas o município competente fixa o ISS daquela atividade em 2%. Isso distorce o preço máximo aceitável em 3%. _Cuidado:_ pela LC 116/2003 (art. 3º), a regra é o ISS do local do **estabelecimento prestador**, com exceções por item da lista de serviços, em que vale o local da prestação (limpeza e vigilância estão entre as exceções — a conferir). Antes de impugnar, confira o item da lista e qual é o município competente.
+- **Alíquota de ISS de município errado:** A planilha adota a alíquota de ISS de 5%, mas o município competente fixa o ISS daquela atividade em 2%. Isso distorce o preço máximo aceitável em 3%. _Cuidado:_ pela LC 116/2003 (art. 3º), a regra é o ISS do local do **estabelecimento prestador**, com exceções por item da lista de serviços, em que vale o local da prestação (limpeza, subitem 7.10, e vigilância, subitem 11.02, estão entre as exceções). Antes de impugnar, confira o item da lista e qual é o município competente.
 - **Erro no cálculo matemático ("Cálculo por Fora" em vez de "Preço por Dentro"):** Como os tributos incidem sobre a própria receita bruta da Nota Fiscal, eles devem ser calculados dividindo o custo por $(1 - \text{Tributos})$. Se o órgão simplesmente somar a porcentagem sobre o custo, o valor final não cobre os impostos reais da nota fiscal na hora da emissão.
 
 #### Como cruzar e impugnar:
 
 - **Cruzamento:** Verifique a lista de impostos do Módulo 6, o item da lista de serviços da LC 116/2003 e a legislação tributária do Município competente.
-- **Fundamento:** **Súmula nº 254 do TCU**, segundo a qual IRPJ e CSLL não são despesas indiretas passíveis de inclusão no BDI do orçamento-base, por serem tributos diretos e personalísticos (paráfrase, fonte secundária; citar o texto entre aspas só depois de conferir no portal do TCU); Lei Complementar nº 116/2003 (art. 3º).
+- **Fundamento:** **Súmula nº 254 do TCU**, segundo a qual IRPJ e CSLL não são despesas indiretas passíveis de inclusão no BDI do orçamento-base, por serem tributos diretos e personalísticos (paráfrase do enunciado oficial, conferido); Lei Complementar nº 116/2003 (art. 3º).
 
 ---
 

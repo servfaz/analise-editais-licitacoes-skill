@@ -2,7 +2,7 @@ Este documento organiza a **estrutura formal do Edital** de ponta a ponta, detal
 
 O Edital é a **"Constituição da Licitação"** (_princípio da vinculação ao instrumento convocatório_). Ele dita todas as regras do jogo, desde o momento em que a disputa é anunciada até a assinatura do contrato.
 
-Abaixo está a estrutura típica completa e o objetivo de cada seção:
+Abaixo está a estrutura típica completa e o objetivo de cada seção. A **ordem das seções não é normativa**: o art. 25 fixa o conteúdo, não a sequência. No modelo de edital da AGU (pregão e concorrência, nov/2025), por exemplo, a impugnação vem perto do fim; nos editais da Prefeitura de São Luís, logo depois dos recursos orçamentários. A numeração 1 a 13 abaixo é a usada nos mapas de fontes (`INT-EDITAL (seção N)`).
 
 ---
 
@@ -30,12 +30,14 @@ Abaixo está a estrutura típica completa e o objetivo de cada seção:
 
 ---
 
-### 3. Dos Recursos Orçamentários (Adequação Financeira)
+### 3. Dos Recursos Orçamentários (Adequação Financeira) e do Orçamento Estimado
 
-- **Objetivo:** Garantir a existência de dotação orçamentária prévia para pagar o futuro contratado.
+- **Objetivo:** Garantir a existência de dotação orçamentária prévia para pagar o futuro contratado e informar o mercado sobre o orçamento estimado (ou sobre o seu sigilo).
+- **Onde costuma estar:** nem sempre é seção própria. No modelo da AGU, a dotação fica no Termo de Referência (adequação orçamentária, art. 6º, XXIII, "j"); há editais que a põem na capa ou no preâmbulo (programa de trabalho, natureza de despesa, fonte de recursos). O orçamento estimado é seção própria no modelo da AGU.
 - **O que define:**
-  - A classificação funcional-programática da despesa (rubrica no orçamento público);
-  - Garantia legal de que o órgão tem dinheiro previsto em orçamento antes de iniciar o certame (art. 150 da Lei 14.133/2021, sob pena de nulidade, e caput do art. 18, que exige compatibilização com as leis orçamentárias).
+  - A classificação funcional-programática da despesa (rubrica no orçamento público) e a natureza de despesa compatível com o objeto;
+  - Garantia legal de que o órgão tem dinheiro previsto em orçamento antes de iniciar o certame (art. 150 da Lei 14.133/2021, sob pena de nulidade, e caput do art. 18, que exige compatibilização com as leis orçamentárias);
+  - **Orçamento estimado:** o valor estimado da contratação ou a indicação de que o orçamento é sigiloso. O sigilo depende de motivação no processo, não prevalece para os órgãos de controle e não alcança os quantitativos e as demais informações necessárias à elaboração das propostas (art. 24).
 
 ---
 
@@ -44,7 +46,7 @@ Abaixo está a estrutura típica completa e o objetivo de cada seção:
 - **Objetivo:** Estabelecer quem pode e quem não pode entrar na disputa.
 - **O que define:**
   - Requisitos gerais de admissão (pessoas jurídicas, MEI, filiais, etc.);
-  - Tratamento diferenciado a Microempresas e Empresas de Pequeno Porte (itens exclusivos até R$ 80 mil ou, para bens de natureza divisível, cotas reservadas de até 25% pela LC 123/2006, art. 48, III, observadas as exceções do art. 49 da LC 123/2006 e os limites do art. 4º da Lei 14.133/2021 (a conferir));
+  - Tratamento diferenciado a Microempresas e Empresas de Pequeno Porte (itens exclusivos até R$ 80 mil ou, para bens de natureza divisível, cotas reservadas de até 25% pela LC 123/2006, art. 48, III, observadas as exceções do art. 49 da LC 123/2006 e os limites do art. 4º da Lei 14.133/2021);
   - Regras para consórcios de empresas (se admitidos ou vedados) e cooperativas;
   - Rol de impedimentos legais (empresas suspensas, inidôneas, em falência ou com vínculos de parentesco com servidores do órgão).
 
@@ -57,7 +59,8 @@ Abaixo está a estrutura típica completa e o objetivo de cada seção:
   - Prazo fatal para inserção da proposta no portal antes da abertura da sessão;
   - Sigilo da proposta até o momento de abertura pública;
   - Vedação à identificação da empresa na proposta inicial (para evitar favorecimento ou conluio);
-  - Moeda, tributos inclusos e prazo de validade da proposta comercial (geralmente 60 dias — parâmetro prático, não exigência legal).
+  - Moeda, tributos inclusos e prazo de validade da proposta comercial (geralmente 60 dias — parâmetro prático, não exigência legal);
+  - **Declarações exigidas no envio da proposta**, entre elas: que a proposta compreende a integralidade dos custos para atender aos direitos trabalhistas previstos na Constituição, nas leis, nas normas infralegais, nas convenções coletivas e nos termos de ajustamento de conduta vigentes (art. 63, § 1º, sob pena de desclassificação — ponto central em serviços com dedicação exclusiva de mão de obra); que cumpre a reserva de cargos para pessoa com deficiência e reabilitado (art. 63, IV); e o enquadramento como ME/EPP, quando pleitear o tratamento favorecido.
 
 ---
 
@@ -68,7 +71,7 @@ Abaixo está a estrutura típica completa e o objetivo de cada seção:
   - Horário de abertura da etapa de lances pelo pregoeiro/agente de contratação;
   - Mecânica do modo de disputa (ex.: tempo fixo de 10 minutos com prorrogações sucessivas de 2 minutos no modo aberto);
   - Intervalo mínimo de diferença de valores ou percentuais entre lances sucessivos (passo de lance);
-  - Critérios de desempate do art. 60 da Lei 14.133/2021, nesta ordem: disputa final entre os empatados, avaliação do desempenho contratual prévio, ações de equidade de gênero no ambiente de trabalho e programa de integridade; persistindo o empate, as preferências do §1º (empresas do estado do ente, empresas brasileiras, investimento em pesquisa e desenvolvimento no País, práticas de mitigação). O empate ficto de ME/EPP corre à parte (art. 44 da LC 123/2006, ressalvado pelo §2º do art. 60). O sorteio era critério da Lei 8.666/1993 e não consta do art. 60.
+  - Critérios de desempate do art. 60 da Lei 14.133/2021, nesta ordem: disputa final entre os empatados, avaliação do desempenho contratual prévio, ações de equidade de gênero no ambiente de trabalho e programa de integridade; persistindo o empate, as preferências do §1º (empresas do estado do ente, empresas brasileiras, investimento em pesquisa e desenvolvimento no País, práticas de mitigação). O empate ficto de ME/EPP corre à parte (art. 44 da LC 123/2006, ressalvado pelo §2º do art. 60). O art. 60 não prevê sorteio, mas o regulamento federal e o modelo de edital da AGU o admitem como **último critério**, em ato público, depois de esgotados os critérios da lei (a conferir no regulamento do ente). Entre ME/EPP com valores equivalentes no intervalo do empate ficto, a LC 123/2006 (art. 45) prevê sorteio para definir quem apresenta a melhor oferta primeiro.
 
 ---
 
@@ -116,11 +119,14 @@ Abaixo está a estrutura típica completa e o objetivo de cada seção:
 
 ### 11. Da Adjudicação, Homologação e Assinatura do Contrato
 
-- **Objetivo:** Encerrar formalmente a fase competitiva e convocar o vencedor para celebrar o compromisso.
+- **Objetivo:** Encerrar formalmente a fase competitiva, convocar o vencedor para celebrar o compromisso e fixar as regras de execução que o edital deve conter.
 - **O que define:**
   - Atos de atribuição do objeto ao vencedor (adjudicação) e validação da legalidade do processo (homologação);
   - Prazos e condições para assinar o termo de contrato ou retirar a Nota de Empenho;
-  - Exigência de apresentação de garantia contratual de execução (se houver, ex.: 5% do valor do contrato em caução, seguro-garantia ou fiança).
+  - Exigência de apresentação de garantia contratual de execução (se houver, ex.: 5% do valor do contrato), cabendo ao contratado escolher entre caução em dinheiro ou títulos da dívida pública, seguro-garantia, fiança bancária ou título de capitalização custeado por pagamento único (art. 96, § 1º, I a IV);
+  - **Exigências na contratação:** programa de integridade a implantar em até 6 meses nas contratações de grande vulto (art. 25, § 4º) e, quando o edital previr, percentual mínimo de mão de obra formado por mulheres vítimas de violência doméstica ou por egressos do sistema prisional (art. 25, § 9º; o modelo da AGU traz essa regra para contratos com 25 ou mais colaboradores);
+  - **Execução, fiscalização, recebimento e pagamento:** o art. 25, caput, exige que o edital contenha as regras de fiscalização e gestão do contrato, de entrega do objeto e de condições de pagamento. Elas podem vir em seções próprias (há editais com seções de aditamentos, reajuste ou repactuação, obrigações, fiscalização, recebimento e pagamento) ou por remissão expressa ao Termo de Referência e à Minuta;
+  - **Registro de preços (seções condicionais):** quando a licitação for por SRP, o edital traz as regras do registro de preços (órgão gerenciador, participantes e adesões), da assinatura e vigência da ata e da formação do cadastro de reserva.
 
 ---
 
@@ -146,12 +152,14 @@ Abaixo está a estrutura típica completa e o objetivo de cada seção:
 
 ### Resumo Visual da Jornada do Edital
 
+A sequência abaixo é didática; a ordem real varia de edital para edital (ver a introdução).
+
 ```
 [1. Preâmbulo & Identificação]     --> Qual licitação, qual órgão e qual regime jurídico?
         ↓
 [2. Objeto]                        --> O que está sendo contratado e como está dividido?
         ↓
-[3. Recursos Orçamentários]        --> Há dotação prevista para pagar o contrato?
+[3. Recursos e Orçamento]          --> Há dotação prevista? O orçamento é público ou sigiloso?
         ↓
 [4. Condições de Participação]     --> Minha empresa pode entrar?
         ↓
@@ -167,7 +175,7 @@ Abaixo está a estrutura típica completa e o objetivo de cada seção:
         ↓
 [10. Recursos Administrativos]     --> Como defendo meu direito contra o julgamento?
         ↓
-[11. Adjudicação & Contrato]       --> Como assino o contrato e presto a garantia?
+[11. Adjudicação & Contrato]       --> Como assino, presto a garantia e executo o contrato?
         ↓
 [12. Infrações & Sanções]          --> Quais são os riscos se eu falhar?
         ↓

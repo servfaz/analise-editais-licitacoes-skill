@@ -100,4 +100,4 @@ Antes de disputar ou ao preparar uma impugnação, abra o ETP e verifique:
 [ ] 5. A escolha do produto comparou outras tecnologias de mercado ou pareceu direcionada?
 ```
 
-Se você encontrar falhas graves em qualquer um desses 5 pontos, **sua impugnação ataca a raiz da licitação**, forçando o órgão a retificar o planejamento ou anular a fase preparatória.
+Se você encontrar falhas graves em qualquer um desses 5 pontos, **sua impugnação ataca a raiz da licitação**, e pede ao órgão que retifique o planejamento; a nulidade só cabe se o vício não puder ser saneado, pelo regime dos arts. 147 a 150 da Lei 14.133/2021, depois de avaliado o interesse público (art. 147).

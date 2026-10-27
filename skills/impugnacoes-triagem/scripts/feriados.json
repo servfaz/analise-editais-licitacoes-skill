@@ -1,0 +1,26 @@
+{
+  "observacao": "Calendário usado por prazo.py. Edite aqui, não no script. Feriados estaduais e municipais não estão neste arquivo: informe-os com --feriado-local (art. 183, III). Pontos facultativos dependem do órgão: a data-limite conservadora os trata como dias sem expediente, e a outra data-limite, como dias com expediente. offset_pascoa é a distância em dias do Domingo de Páscoa; desde é o primeiro ano em que o feriado vale.",
+  "nacionais_fixos": [
+    {"mes": 1, "dia": 1, "nome": "Confraternização Universal", "base": "Lei 662/1949"},
+    {"mes": 4, "dia": 21, "nome": "Tiradentes", "base": "Lei 662/1949"},
+    {"mes": 5, "dia": 1, "nome": "Dia do Trabalho", "base": "Lei 662/1949"},
+    {"mes": 9, "dia": 7, "nome": "Independência", "base": "Lei 662/1949"},
+    {"mes": 10, "dia": 12, "nome": "Nossa Senhora Aparecida", "base": "Lei 6.802/1980"},
+    {"mes": 11, "dia": 2, "nome": "Finados", "base": "Lei 662/1949"},
+    {"mes": 11, "dia": 15, "nome": "Proclamação da República", "base": "Lei 662/1949"},
+    {"mes": 11, "dia": 20, "nome": "Dia Nacional de Zumbi e da Consciência Negra", "base": "Lei 14.759/2023", "desde": 2024},
+    {"mes": 12, "dia": 25, "nome": "Natal", "base": "Lei 662/1949"}
+  ],
+  "nacionais_moveis": [
+    {"offset_pascoa": -2, "nome": "Sexta-feira da Paixão", "base": "Lei 9.093/1995, art. 2º; consta como feriado no calendário federal"}
+  ],
+  "pontos_facultativos": [
+    {"offset_pascoa": -48, "nome": "Carnaval (segunda-feira)", "observacao": "ponto facultativo; o expediente depende do órgão"},
+    {"offset_pascoa": -47, "nome": "Carnaval (terça-feira)", "observacao": "ponto facultativo; o expediente depende do órgão"},
+    {"offset_pascoa": -46, "nome": "Quarta-feira de Cinzas", "observacao": "ponto facultativo até as 14h; expediente só após as 14h"},
+    {"offset_pascoa": 60, "nome": "Corpus Christi", "observacao": "ponto facultativo; o expediente depende do órgão"},
+    {"mes": 10, "dia": 28, "nome": "Dia do Servidor Público", "observacao": "ponto facultativo; pode ser transferido para outra data"},
+    {"mes": 12, "dia": 24, "nome": "Véspera de Natal", "observacao": "ponto facultativo após as 14h; expediente até as 14h"},
+    {"mes": 12, "dia": 31, "nome": "Véspera de Ano Novo", "observacao": "ponto facultativo após as 14h; expediente até as 14h"}
+  ]
+}

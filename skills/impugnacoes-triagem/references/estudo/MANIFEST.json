@@ -1,0 +1,179 @@
+{
+  "gerado_por": "scripts/sync_estudo.py",
+  "origem": "briefing/Mapeamento_Analise",
+  "estudo_sha256": "3fb49429943b6f9e9c04d819d2d1b813125ddb714e3d2d522ce3ab7ee2d359e6",
+  "arquivos": [
+    {
+      "origem": "01 - Catalogo de Fontes.md",
+      "destino": "catalogo-fontes.md",
+      "sha256_origem": "1bc7bd4fe90749a8ab7463226d1e20c51480e9a4a00a56183381ff542a536d6f",
+      "sha256_destino": "c9f3591a142ede60d1338e4c9341d78297f251634f93aff764debd68b36f0534"
+    },
+    {
+      "origem": "Edital/Estrutura - Edital.md",
+      "destino": "edital/estrutura.md",
+      "sha256_origem": "59ce7f536c78fcd0accea32d5457124460d03b5fb340b1eed47b84eccd872ba7",
+      "sha256_destino": "33f8f62284f947bde09351a47b7593e75ad60c74782acc77ed3239859a626736"
+    },
+    {
+      "origem": "Edital/Analise - Edital.md",
+      "destino": "edital/analise.md",
+      "sha256_origem": "284afb8248b1f9db91919fae90068e3d9e9b929ac8f77b2efaaa23299f603710",
+      "sha256_destino": "3e85f008d1242124c085af31f96f5e04ecc99e1a5cd471122a5b87ba603955eb"
+    },
+    {
+      "origem": "Edital/Fontes - Edital.md",
+      "destino": "edital/fontes.md",
+      "sha256_origem": "1544e15d29eba7e9896dede45b7a1dbaba7fb7d37a4273a59528032857753535",
+      "sha256_destino": "c8a5792a4299e4ec95d6b249aa60d157c7ab49e303513691f0da7f6b446a355a"
+    },
+    {
+      "origem": "Termo de Referência/Estrutura - Termo de Refencia.md",
+      "destino": "tr/estrutura.md",
+      "sha256_origem": "31aad1d53c351e874f0ff624f323dbce1d2a629f1650ade6d70bac081aceeb64",
+      "sha256_destino": "cb62e78c6f38e8f2b10a2051e66c514c6592d3b146b330ddffaca9ee7fa25900"
+    },
+    {
+      "origem": "Termo de Referência/Analise - Termo de Referencia.md",
+      "destino": "tr/analise.md",
+      "sha256_origem": "1c8e752de98b8494ae2cfb960afae8adeda4933844462704486434700165ac3b",
+      "sha256_destino": "a0884c6b8e63b27436409393151e40b986e880ce52c59fc276b29f8f58ade485"
+    },
+    {
+      "origem": "Termo de Referência/Fontes - Termo de Referencia.md",
+      "destino": "tr/fontes.md",
+      "sha256_origem": "8f8664d1f0a08e467ff0d493fba0c3cc0ad8afd8e77db30b94d5fc00fa6a2f36",
+      "sha256_destino": "2c69af3eb848aa8acdac80911817c22a8060ab5aeb775da578f85897dc5f9307"
+    },
+    {
+      "origem": "Estudo Técnico Preliminar/Estrutura - ETP.md",
+      "destino": "etp/estrutura.md",
+      "sha256_origem": "3ecea797fa57d24cd43490bb402d5214c2cb3944574485caa21b4a1b6f522ebd",
+      "sha256_destino": "2f9dad9cd33ec9c7a956234a001783211e9c49bce0d54677de55bfd22c6478ad"
+    },
+    {
+      "origem": "Estudo Técnico Preliminar/Analise - Estudo tecnico Preliminar.md",
+      "destino": "etp/analise.md",
+      "sha256_origem": "0af6e91cb6fa8760c70c6ceab53b3b3e604aa91a75d59a43d29da7d12eed527c",
+      "sha256_destino": "866379f8e32058d757025e21711be56e24e89796d6f14cd71d22e1050b6992d7"
+    },
+    {
+      "origem": "Estudo Técnico Preliminar/Fontes - ETP.md",
+      "destino": "etp/fontes.md",
+      "sha256_origem": "a69421dce972f71bf9538e3e73e3a9bdcc366d5f8aeabea3ba05c2fc6484dea9",
+      "sha256_destino": "67639309aa92820ce04e678eff2bf0c8c16602e2616c3ac3a2ff521d5900b9e6"
+    },
+    {
+      "origem": "Planilha de Custos/Estrutura - Planilha de Custos.md",
+      "destino": "planilha/estrutura.md",
+      "sha256_origem": "deb456abf9c3e7a6cfb06e32655089305c54077f6fde92ab2ac2c77d3ada4e28",
+      "sha256_destino": "29c0c9521717c2526b90ba9c8c6fb979f4eb47fb808546eeab4f93891fe0497e"
+    },
+    {
+      "origem": "Planilha de Custos/Analise - Planilha de Custos.md",
+      "destino": "planilha/analise.md",
+      "sha256_origem": "0760fa2489261262917a783749c6674b829a57bdc5ecf3df4fffc37a2712b5a4",
+      "sha256_destino": "b1856e4874bd52e67a1152352c8531d2f4757e9d93362619970544f286ec99ec"
+    },
+    {
+      "origem": "Planilha de Custos/Fontes - Planilha de Custos.md",
+      "destino": "planilha/fontes.md",
+      "sha256_origem": "61f0a531cb6f425adfc5c6ac106f920700274f065a5ec49864f0852569d20310",
+      "sha256_destino": "3fbb23fbf34a6d5895a5299594881b07dcb871189efea0cd8964e162e73db94d"
+    },
+    {
+      "origem": "Pesquisa(Mapa) de Preços/Estrutura - Pesquisa de Precos.md",
+      "destino": "pesquisa/estrutura.md",
+      "sha256_origem": "9439d939625a2981e7ced95d30c13e8d15f22ba43d025ad6b1297d860dc8b245",
+      "sha256_destino": "ca10bab3852a64da8d2c75c0874af4c8086179eed3741c9a8bbc51083902ece3"
+    },
+    {
+      "origem": "Pesquisa(Mapa) de Preços/Analise - Pesquisa de Precos.md",
+      "destino": "pesquisa/analise.md",
+      "sha256_origem": "88254902915e64703947bdc1ce631db43f9412f2ed2b272345811b6350510917",
+      "sha256_destino": "e2d41352709d0a2cd5f6e8bd32c69b7b39778962323d61c8cd03462210088aee"
+    },
+    {
+      "origem": "Pesquisa(Mapa) de Preços/Fontes - Pesquisa de Precos.md",
+      "destino": "pesquisa/fontes.md",
+      "sha256_origem": "461c4acb1d57e04a7191ceb5ccbab26fe5662096e795f39b34dc87d0fcb69bdc",
+      "sha256_destino": "a39655f2784b450155333613fad92e4bbb38d69bdb9374669b1700374aff8779"
+    },
+    {
+      "origem": "Minuta Contratual/Estrutura - Minuta Contratual.md",
+      "destino": "minuta/estrutura.md",
+      "sha256_origem": "b59485f2423eb0ab1c78b015e047858bbf4d54bc879ec991967e25860e0092c0",
+      "sha256_destino": "4cc2790731259931e8c5ad7c68e3f73bde2dfee25bc659c12aee9a82dba76f38"
+    },
+    {
+      "origem": "Minuta Contratual/Analise - Minuta Contratual.md",
+      "destino": "minuta/analise.md",
+      "sha256_origem": "19bfda2b6cb224c6208db18a00e95b69714c761fd8c3eab6a27cdcfb33758132",
+      "sha256_destino": "66fb72806e7419744adce6a244a436e35cfb080d97afb30e0f9e45262cd036ec"
+    },
+    {
+      "origem": "Minuta Contratual/Fontes - Minuta Contratual.md",
+      "destino": "minuta/fontes.md",
+      "sha256_origem": "a5f7d70356cc88cc4dfedf26bc308d2cd43ffe0d1a3fc983a965938f70c8d471",
+      "sha256_destino": "5265230da7513addde13f918cb3f339ef72f581437aa51d20c71038867b19964"
+    }
+  ],
+  "escopo_triagem": {
+    "fora_da_copia": "Retificações, Esclarecimentos e Respostas/ (RERI: processo à parte)",
+    "ajustes_por_arquivo": {
+      "edital/fontes.md": {
+        "frases_retiradas": 2,
+        "colunas_retiradas": 1,
+        "celulas_limpas": 5,
+        "linhas_omitidas": [
+          "Prazo e divulgação da resposta",
+          "Resposta depois do prazo de impugnar"
+        ]
+      },
+      "tr/fontes.md": {
+        "frases_retiradas": 2,
+        "colunas_retiradas": 1,
+        "celulas_limpas": 0,
+        "linhas_omitidas": []
+      },
+      "etp/fontes.md": {
+        "frases_retiradas": 2,
+        "colunas_retiradas": 1,
+        "celulas_limpas": 1,
+        "linhas_omitidas": []
+      },
+      "planilha/fontes.md": {
+        "frases_retiradas": 2,
+        "colunas_retiradas": 1,
+        "celulas_limpas": 0,
+        "linhas_omitidas": [
+          "Resposta que muda a CCT de referência"
+        ]
+      },
+      "pesquisa/fontes.md": {
+        "frases_retiradas": 2,
+        "colunas_retiradas": 1,
+        "celulas_limpas": 0,
+        "linhas_omitidas": []
+      },
+      "minuta/fontes.md": {
+        "frases_retiradas": 2,
+        "colunas_retiradas": 1,
+        "celulas_limpas": 1,
+        "linhas_omitidas": [
+          "Repactuação logo após a assinatura"
+        ]
+      }
+    }
+  },
+  "gerados": [
+    {
+      "destino": "indice-fontes.md",
+      "sha256": "bb3125340f535414b1a367bcebbe6c1a0c4c1d26b55b3cc7796ca15fd461e42b"
+    },
+    {
+      "destino": "LEIA-ME.md",
+      "sha256": "711c292b8bf369c731a2f164ce52b7dbf8b4101aa85f72361dccee6847c5a3b3"
+    }
+  ]
+}

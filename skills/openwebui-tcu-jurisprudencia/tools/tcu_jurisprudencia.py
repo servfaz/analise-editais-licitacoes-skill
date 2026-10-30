@@ -135,6 +135,74 @@ class Tools:
 
     # ---- tools --------------------------------------------------------------------------------------------
 
+    async def buscar_jurisprudencia_selecionada(self, tema: str, pagina: int = 0, __event_emitter__=None) -> str:
+        """
+        Busca enunciados da Jurisprudência Selecionada do TCU (teses curadas, cada uma com o acórdão de origem).
+        Use como primeiro passo para fundamentar um vício de edital, contrato ou julgamento.
+        Use frases curtas entre aspas (ex.: "retenção de pagamento" "regularidade fiscal").
+        Depois, abra o acórdão de origem com obter_acordao_tcu antes de citar.
+        :param tema: termos jurídicos do vício, de preferência frases entre aspas.
+        :param pagina: página de resultados, começando em 0.
+        """
+        pagina = max(int(pagina or 0), 0)
+        try:
+            dados = await self._consultar('jurisprudencia-selecionada', 'documentosResumidos', tema, '',
+                                          self.valves.max_resultados, pagina * self.valves.max_resultados,
+                                          __event_emitter__)
+        except FalhaTCU as e:
+            return FALHA.format(motivo=e)
+        docs = dados['documentos']
+        if not docs:
+            return NENHUM
+        linhas = [f'## Jurisprudência Selecionada do TCU — {tema}', '']
+        for i, doc in enumerate(docs, start=pagina * self.valves.max_resultados + 1):
+            classificacao = ' > '.join(limpar(doc.get(c)) for c in ('AREA', 'TEMA', 'SUBTEMA') if limpar(doc.get(c)))
+            linhas.append(f'{i}. **{limpar(doc.get("ENUNCIADO"))}**')
+            linhas.append(f"   - Origem: {identificacao(doc)}, sessão de {doc.get('DATASESSAOFORMATADA', '?')}"
+                          f" · [abrir acórdão]({link_acordao(doc.get('NUMACORDAO'), doc.get('ANOACORDAO'), doc.get('COLEGIADO'))})")
+            if classificacao:
+                linhas.append(f'   - Classificação: {classificacao}')
+        linhas += ['', self._rodape_paginacao(dados, pagina, len(docs)),
+                   'O enunciado é resumo do TCU: leia a deliberação e o voto do acórdão de origem antes de citar.',
+                   '', AVISO]
+        return '\n'.join(linhas)
+
+    async def buscar_sumulas_tcu(self, termo: str, __event_emitter__=None) -> str:
+        """
+        Busca súmulas do TCU por número (ex.: "254") ou por assunto (ex.: "parcelamento do objeto").
+        Traz o enunciado, se está vigente e o fundamento legal com os precedentes.
+        :param termo: número da súmula ou termos do assunto.
+        """
+        termo = (termo or '').strip()
+        numero = re.fullmatch(r'(?:s[uú]mula\s*)?(\d{1,4})', termo, flags=re.I)
+        try:
+            if numero:
+                dados = await self._consultar('sumula', 'documento', '*', f'NUMERO:{numero.group(1)}', 1, 0,
+                                              __event_emitter__)
+            else:
+                dados = await self._consultar('sumula', 'documento', termo, '', min(self.valves.max_resultados, 5),
+                                              0, __event_emitter__)
+        except FalhaTCU as e:
+            return FALHA.format(motivo=e)
+        docs = dados['documentos']
+        if not docs:
+            return NENHUM
+        linhas = [f'## Súmulas do TCU — {termo}', '']
+        for doc in docs:
+            vigente = 'vigente' if str(doc.get('VIGENTE', '')).lower() == 'true' else 'NÃO vigente'
+            linhas.append(f"### Súmula TCU {limpar(doc.get('NUMERO'))} ({vigente})")
+            linhas.append(limpar(doc.get('CABECALHO')) or limpar(doc.get('ENUNCIADO')))
+            aprovacao = f"Aprovada pelo Acórdão {doc.get('NUMAPROVACAO', '?')}/{doc.get('ANOAPROVACAO', '?')}-{doc.get('COLEGIADO', '?')}"
+            linhas.append(f'- {aprovacao}')
+            excerto = limpar(doc.get('EXCERTO'))
+            if excerto:
+                linhas.append(f'- Fundamento e precedentes: {cortar(excerto, 1500)}')
+            linhas.append('')
+        if (dados.get('quantidadeEncontrada') or 0) > len(docs):
+            linhas.append(f"Mostrando {len(docs)} de {dados['quantidadeEncontrada']}; refine o termo para ver outras.")
+        linhas += ['', AVISO]
+        return '\n'.join(linhas)
+
     async def buscar_acordaos_tcu(self, consulta: str, ano_minimo: Optional[int] = None,
                                   colegiado: Optional[str] = None, pagina: int = 0,
                                   __event_emitter__=None) -> str:

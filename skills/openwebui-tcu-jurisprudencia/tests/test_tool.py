@@ -124,6 +124,58 @@ class ObterAcordao(unittest.TestCase):
         self.assertIn('Informe o colegiado', texto)
 
 
+ENUNCIADO = {
+    'KEY': 'JURISPRUDENCIA-SELECIONADA-1', 'NUMACORDAO': '1505', 'ANOACORDAO': '2026', 'COLEGIADO': 'Plenário',
+    'AREA': 'Contrato Administrativo', 'TEMA': 'Execução de contrato', 'SUBTEMA': 'Regularidade fiscal',
+    'ENUNCIADO': 'É vedada a <em>retenção</em> de pagamento por irregularidade fiscal.',
+    'DATASESSAOFORMATADA': '10/06/2026', 'AUTORTESE': 'RELATOR FICTICIO',
+}
+SUMULA = {
+    'KEY': 'SUMULA-1', 'NUMERO': '<em>254</em>', 'VIGENTE': 'true', 'NUMAPROVACAO': '625', 'ANOAPROVACAO': '2010',
+    'COLEGIADO': 'Plenário', 'CABECALHO': 'O IRPJ e a CSLL não se consubstanciam em despesa indireta.',
+    'EXCERTO': '<p><b>Fundamento legal:</b></p><p>- Lei 9.430/1996.</p>',
+}
+
+
+class BuscarJurisprudenciaSelecionada(unittest.TestCase):
+    def test_enunciado_com_acordao_de_origem(self):
+        tools = tcu.Tools()
+        with mock.patch.object(tcu.urllib.request, 'urlopen', return_value=resposta(pagina([ENUNCIADO]))) as u:
+            texto = rodar(tools.buscar_jurisprudencia_selecionada(tema='"retenção de pagamento"'))
+        self.assertIn('**É vedada a retenção de pagamento por irregularidade fiscal.**', texto)
+        self.assertIn('Origem: Acórdão 1505/2026-Plenário, sessão de 10/06/2026', texto)
+        self.assertIn('Contrato Administrativo > Execução de contrato > Regularidade fiscal', texto)
+        self.assertIn('/base/jurisprudencia-selecionada/documentosResumidos', u.call_args[0][0].full_url)
+
+    def test_vazio(self):
+        with mock.patch.object(tcu.urllib.request, 'urlopen', return_value=resposta(pagina([]))):
+            texto = rodar(tcu.Tools().buscar_jurisprudencia_selecionada(tema='x'))
+        self.assertEqual(texto, tcu.NENHUM)
+
+
+class BuscarSumulas(unittest.TestCase):
+    def chamar(self, termo, corpo):
+        with mock.patch.object(tcu.urllib.request, 'urlopen', return_value=resposta(corpo)) as u:
+            texto = rodar(tcu.Tools().buscar_sumulas_tcu(termo=termo))
+        return texto, urllib.parse.parse_qs(urllib.parse.urlsplit(u.call_args[0][0].full_url).query)
+
+    def test_por_numero_usa_filtro(self):
+        texto, params = self.chamar('Súmula 254', pagina([SUMULA]))
+        self.assertEqual(params['filtro'], ['NUMERO:254'])
+        self.assertIn('### Súmula TCU 254 (vigente)', texto)
+        self.assertIn('Aprovada pelo Acórdão 625/2010-Plenário', texto)
+        self.assertIn('Lei 9.430/1996', texto)
+
+    def test_por_assunto_usa_termo(self):
+        _, params = self.chamar('parcelamento do objeto', pagina([{**SUMULA, 'VIGENTE': 'false'}]))
+        self.assertEqual(params['termo'], ['parcelamento do objeto'])
+        self.assertNotIn('filtro', params)
+
+    def test_sumula_nao_vigente_sinalizada(self):
+        texto, _ = self.chamar('254', pagina([{**SUMULA, 'VIGENTE': 'false'}]))
+        self.assertIn('NÃO vigente', texto)
+
+
 class Auxiliares(unittest.TestCase):
     def test_link_no_formato_do_portal(self):
         esperado = ('https://pesquisa.apps.tcu.gov.br/documento/acordao-completo/*/NUMACORDAO%253A2924%2520'

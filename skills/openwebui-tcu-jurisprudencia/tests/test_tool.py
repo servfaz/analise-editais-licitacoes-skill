@@ -65,6 +65,7 @@ class BuscarAcordaos(unittest.TestCase):
         self.assertIn('/documento/acordao-completo/*/NUMACORDAO%253A1505', texto)
         self.assertIn('pagina=1', texto)
         self.assertIn(tcu.AVISO, texto)
+        self.assertIn('sentido contrário', texto)
 
     def test_monta_filtros_paginacao_e_user_agent(self):
         _, pedido = self.chamar(pagina([ACORDAO_RESUMIDO]), consulta='"x"', ano_minimo=2021,
@@ -84,6 +85,7 @@ class BuscarAcordaos(unittest.TestCase):
         texto, _ = self.chamar('<html><body>Requisição rejeitada</body></html>', consulta='x')
         self.assertIn('falhou', texto)
         self.assertIn('firewall', texto)
+        self.assertIn('de memória', texto)
         self.assertNotEqual(texto, tcu.NENHUM)
 
     def test_erro_http_vira_falha_tecnica(self):

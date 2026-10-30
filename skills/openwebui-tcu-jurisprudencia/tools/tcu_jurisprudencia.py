@@ -2,7 +2,7 @@
 title: Jurisprudência TCU Servfaz
 description: Pesquisa acórdãos, jurisprudência selecionada e súmulas na Pesquisa de Jurisprudência do TCU para fundamentar impugnações e recursos.
 author: Servfaz
-version: 0.1.0
+version: 0.1.1
 """
 # Import manual em Workspace > Tools; Function Calling = Native no modelo (ver ../INSTALACAO.md).
 # Usa a API REST pública por trás de pesquisa.apps.tcu.gov.br. O firewall do TCU barra User-Agent genérico
@@ -21,11 +21,13 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 PORTAL = 'https://pesquisa.apps.tcu.gov.br'
-AVISO = ('_Resultado da Pesquisa de Jurisprudência do TCU. É candidato, não prova: abra o inteiro teor, '
-         'confira deliberação, lei aplicada e contexto antes de citar._')
+AVISO = ('_Resultado da Pesquisa de Jurisprudência do TCU. É candidato, não prova: abra o inteiro teor com '
+         'obter_acordao_tcu e confira deliberação, lei aplicada e contexto antes de citar. Verifique na lista '
+         'enunciados em sentido contrário. Só transcreva entre aspas o que veio do texto aberto._')
 NENHUM = 'Nenhum resultado na Pesquisa do TCU para esta consulta. Tente frases mais curtas, entre aspas, ou outro termo.'
-FALHA = ('A consulta ao TCU falhou (erro técnico: {motivo}). Não foi possível pesquisar agora; informe isso ao '
-         'usuário e não conclua que não há jurisprudência sobre o tema.')
+FALHA = ('A consulta ao TCU falhou (erro técnico: {motivo}). Não foi possível pesquisar agora. Informe isso ao '
+         'usuário, não conclua que não há jurisprudência sobre o tema e não transcreva texto de súmula ou acórdão '
+         'de memória: marque o precedente como "a conferir".')
 COLEGIADOS = ('Plenário', 'Primeira Câmara', 'Segunda Câmara')
 
 

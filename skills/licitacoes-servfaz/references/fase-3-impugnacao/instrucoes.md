@@ -77,7 +77,7 @@ Para cada hipótese candidata, siga também o roteiro específico do mapa em `re
 2. Cruze a evidência com as partes pertinentes dos outros documentos disponíveis. Em listas de materiais, uniformes, EPIs, equipamentos, postos, benefícios ou obrigações relevantes ao achado, discrimine os itens em tabela com quantidade e periodicidade quando constarem. Registre a justificativa, exceção, regra complementar ou contradição que possa afastar a hipótese. Não invente prevalência entre documentos conflitantes.
 3. Explique o efeito concreto sobre competição, formulação/comparação de propostas, julgamento, preço, prazo ou execução. Quantifique apenas com dados recebidos; se o efeito for possível, e não comprovado, diga isso.
 4. Indique a base legal potencialmente aplicável e seu estado de conferência. Consulte texto normativo oficial e, quando a tese depender de jurisprudência, a fonte oficial do precedente. Verifique número, ano, órgão julgador, contexto, trecho pertinente, decisão posterior ou entendimento contrário relevante. Diferencie decisão, voto, relatório e alegação de parte. Não trate precedentes sob lei revogada como automaticamente aplicáveis à Lei nº 14.133/2021.
-5. Apresente o melhor contraponto da Administração e diga que prova falta para confirmar ou afastar a hipótese. Separe fatos extraídos de inferências; marque cada inferência relevante como **[inferência]**, explicite sua base e não a apresente como fato comprovado. Na dúvida entre inferir e omitir, registre a lacuna.
+5. Apresente o melhor contraponto da Administração, incluindo o dispositivo legal ou precedente que mais a favoreça (por exemplo, inciso que autoriza a medida em outra forma), e diga que prova falta para confirmar ou afastar a hipótese. Separe fatos extraídos de inferências; marque cada inferência relevante como **[inferência]**, explicite sua base e não a apresente como fato comprovado. Na dúvida entre inferir e omitir, registre a lacuna.
 6. Proponha correção ou pergunta objetiva, sem transformar sugestão em conclusão jurídica definitiva.
 
 Use ferramentas oficiais disponíveis no ambiente; para jurisprudência do TCU, siga o roteiro de `references/capacidades.md`. Na matriz, só marque se a tese depende de precedente; pesquise o TCU depois da seleção do analista, só para os IDs escolhidos, antes de redigir a fundamentação. Para cada fundamento, parta do ID e do endereço indicados no mapa/catálogo, depois confira legislação em fonte oficial e jurisprudência do TCU ou base oficial competente. Resultado de busca é candidato, não prova de pertinência. Se não houver acesso à fonte ou não for possível confirmar o inteiro teor, marque a verificação como pendente; não cite de memória número de acórdão, súmula, artigo específico, regra setorial, alíquota ou regulamento local. Regulamento federal não se aplica automaticamente a ente estadual, distrital ou municipal.
@@ -118,6 +118,14 @@ Apresente uma lista de seleção com os IDs, resumo claro, classificação, impa
 Se a matriz não tiver pontos defensáveis para impugnação ou esclarecimento, não fabrique item para permitir seleção ou minuta. Informe o resultado e os riscos de precificação/execução que ainda merecem atenção.
 
 ## Redação após a seleção
+
+**Passo obrigatório antes de redigir.** Para cada ponto escolhido, nesta ordem e antes de escrever a Fundamentação:
+
+1. Abra o texto oficial de cada dispositivo legal que vai citar e copie dele o trecho; se não houver ferramenta para isso, cite sem aspas e marque `a conferir`.
+2. Se a tese usar precedente, pesquise o TCU pelo roteiro de `references/capacidades.md`: jurisprudência selecionada e súmulas, depois o inteiro teor do acórdão de origem. Verifique enunciados em sentido contrário na lista retornada.
+3. Registre ao analista, antes da minuta, o resultado de cada conferência (aberto e conferido, contrário encontrado, ou `a conferir`).
+
+Citação de lei ou precedente sem esse passo não entra na minuta como transcrição.
 
 A escolha dos achados autoriza começar a minuta, sem pedir uma segunda autorização para redigir. Use somente os pontos selecionados classificados como impugnação sugerida ou esclarecimento. Não transforme risco de precificação/execução em alegação jurídica. Se um ponto selecionado depender de prova essencial não disponível, não o redija como fato confirmado: exponha a pendência e redija apenas se houver formulação limitada e fiel aos elementos existentes, por exemplo como pedido de esclarecimento. Caso contrário, explique por que esse ponto não pode entrar na peça.
 

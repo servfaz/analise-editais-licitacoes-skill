@@ -41,7 +41,7 @@ Estas são as regras que a Fase 4 aplica na extração de critérios (etapa 1) e
 | Regime tributário | Edital e legislação | Simples Nacional vedado em cessão de mão de obra (LC 123/2006, art. 17, XII) |
 | PIS e COFINS | EFD-Contribuições | Lucro presumido: 0,65% e 3,00%. Lucro real: média efetiva dos últimos 12 meses, comprovada por EFD-Contribuições, não a alíquota nominal |
 | ISS | Legislação do município competente | Alíquota do município da prestação, conforme LC 116/2003 |
-| IRPJ e CSLL | Súmula 254 do TCU (conferir texto oficial) | Não são despesas repassáveis na planilha; a presença deles altera a base de comparação |
+| IRPJ e CSLL | Súmula 254 do TCU (conferir texto e vigência pela pesquisa de súmulas do TCU, ver `references/capacidades.md`) | Não são despesas repassáveis na planilha; a presença deles altera a base de comparação |
 | Cálculo dos tributos | Edital | "Por dentro": preço = (custo + custos indiretos + lucro) ÷ (1 − tributos). Somar o percentual "por fora" subestima os tributos |
 | Desoneração da folha (CPRB) | Lei 14.973/2024 | Em 2026, CPRB reduzida sobre a receita e parcela do INSS sobre a folha coexistem; zerar o INSS patronal sem a contrapartida é inconsistência |
 | CBS e IBS | LC 214/2025 | 2026 é ano-teste (CBS 0,9%, IBS 0,1%), compensáveis com PIS/COFINS; conferir a regra vigente na data do certame |

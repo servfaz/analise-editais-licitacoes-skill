@@ -342,6 +342,8 @@ de inexequibilidade e diligências; e quaisquer outros riscos, evidentes ou ocul
 > encontrado, cada um com a **referência da fonte**.
 > 🚫 **Não invente** fundamento legal, acórdão ou jurisprudência: cite o artigo apenas quando
 > tiver segurança e, se não tiver, sinalize que **exige validação jurídica humana**.
+> Precedente do TCU só com número conferido pela pesquisa de jurisprudência nesta execução
+> (roteiro em `references/capacidades.md`); sem ela, "exige validação jurídica humana".
 
 **A. Pontos de Impugnação (cláusulas restritivas ou ilegais)**
 

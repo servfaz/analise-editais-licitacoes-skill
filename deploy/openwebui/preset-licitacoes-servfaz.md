@@ -11,7 +11,8 @@ Nos testes de 03/11/2026, com a pesquisa do TCU fora do ar, a skill e a mensagem
 - aviso de que a pesquisa do TCU falhou, no início da resposta;
 - confiança em palavras (alta, média, baixa) e motivo ao lado de cada precedente, e uma linha final "Confiança da resposta";
 - sem letras internas (A a D) e sem "pacífica", "consolidada" ou "firme" quando o inteiro teor não foi aberto;
-- nenhum precedente citado sem fonte aberta na conversa.
+- nenhum precedente citado sem fonte aberta na conversa;
+- nada entre aspas vindo de trecho de resultado de busca, e o LexML só como fonte oficial com URN do TCU (regra 7, de 03/11/2026: num teste completo, o resumo de um artigo de revista catalogado no LexML entrou na minuta como "ementa oficial" do Acórdão 964/2012).
 
 As letras A a D continuam na skill (`references/capacidades.md` e `references/regras-gerais.md`) e na Tool, só para o modelo classificar as fontes.
 
@@ -23,7 +24,7 @@ As letras A a D continuam na skill (`references/capacidades.md` e `references/re
 | Nome | Licitações Servfaz |
 | Modelo base | `gemini/gemini-3.6-flash` |
 | Descrição | Licitações da Servfaz (Lei 14.133): skill licitacoes-servfaz, fontes oficiais (TCU e Lei 14.133) e busca na web com confiança. |
-| Tools | `jurisprudencia_tcu_servfaz` (Tool "Fontes oficiais Servfaz", 0.2.3 ou posterior) |
+| Tools | `jurisprudencia_tcu_servfaz` (Tool "Fontes oficiais Servfaz", 0.2.4 ou posterior) |
 | Skills | `licitacoes-servfaz` |
 | Recursos ligados por padrão | Pesquisa na Web (`web_search`) |
 | Function Calling | Native |
@@ -63,6 +64,7 @@ Regras de fundamentação, válidas em toda resposta:
 4. Não mostre códigos internos de classificação das fontes, como "nível A" ou "nível B".
 5. Sem o inteiro teor do acórdão aberto na pesquisa oficial do TCU, não use "pacífica", "consolidada", "firme" nem "confirmada na base oficial".
 6. Só atribua uma tese a um acórdão se o texto aberto a ligar a esse acórdão.
+7. Texto entre aspas (lei, ementa, enunciado ou trecho de acórdão) só pode vir do resultado de uma ferramenta ou de uma página aberta com fetch_url, nunca do trecho de um resultado de busca. No LexML, só é fonte oficial a página com URN do TCU (urn:lex:br:tribunal.contas.uniao); registro de biblioteca, revista ou livro é doutrina e não vale como ementa.
 ```
 
 ## Como recriar

@@ -2,7 +2,7 @@
 title: Fontes oficiais Servfaz
 description: Pesquisa acórdãos, jurisprudência selecionada e súmulas do TCU e traz o texto vigente da Lei 14.133/2021 para fundamentar impugnações e recursos.
 author: Servfaz
-version: 0.2.0
+version: 0.2.1
 """
 # Import manual em Workspace > Tools; Function Calling = Native no modelo (ver ../INSTALACAO.md).
 # Usa a API REST pública por trás de pesquisa.apps.tcu.gov.br. O firewall do TCU barra User-Agent genérico
@@ -29,10 +29,20 @@ PORTAL = 'https://pesquisa.apps.tcu.gov.br'
 AVISO = ('_Resultado da Pesquisa de Jurisprudência do TCU. É candidato, não prova: abra o inteiro teor com '
          'obter_acordao_tcu e confira deliberação, lei aplicada e contexto antes de citar. Verifique na lista '
          'enunciados em sentido contrário. Só transcreva entre aspas o que veio do texto aberto._')
-NENHUM = 'Nenhum resultado na Pesquisa do TCU para esta consulta. Tente frases mais curtas, entre aspas, ou outro termo.'
+# O plano B vai na própria resposta da tool: o modelo sempre lê o resultado da chamada, mas nem sempre abre
+# o arquivo da skill que descreve o plano (teste de 03/11/2026 no Open WebUI).
+PLANO_B = ('Plano B, se houver busca na web: procure primeiro em fontes oficiais (site:tcu.gov.br, '
+           'site:lexml.gov.br) e classifique cada fonte aberta. A = TCU com inteiro teor (confiança alta; só ele '
+           'conta como "conferido"); B = oficial derivada, como LexML, licitacoesecontratos.tcu.gov.br ou outro '
+           'órgão público (confiança média: número e ementa; inteiro teor a conferir); C = repositório ou editora '
+           'jurídica (confiança baixa: só pista); D = blog, IA ou rede social (não usar). Cite só precedentes que '
+           'apareceram nas fontes abertas, com o nível de cada um; nunca de memória, nem de outro tribunal. Sem '
+           'busca na web, marque o precedente como "a conferir".')
+NENHUM = ('Nenhum resultado na Pesquisa do TCU para esta consulta. Tente frases mais curtas, entre aspas, ou outro '
+          'termo. ' + PLANO_B)
 FALHA = ('A consulta ao TCU falhou (erro técnico: {motivo}). Não foi possível pesquisar agora. Informe isso ao '
          'usuário, não conclua que não há jurisprudência sobre o tema e não transcreva texto de súmula ou acórdão '
-         'de memória: marque o precedente como "a conferir".')
+         'de memória. ' + PLANO_B)
 COLEGIADOS = ('Plenário', 'Primeira Câmara', 'Segunda Câmara')
 
 

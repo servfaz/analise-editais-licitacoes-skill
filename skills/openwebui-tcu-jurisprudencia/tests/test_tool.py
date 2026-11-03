@@ -88,6 +88,15 @@ class BuscarAcordaos(unittest.TestCase):
         self.assertIn('de memória', texto)
         self.assertNotEqual(texto, tcu.NENHUM)
 
+    def test_falha_e_vazio_trazem_o_plano_b_com_os_niveis(self):
+        falha, _ = self.chamar('<html>Requisição rejeitada</html>', consulta='x')
+        vazio, _ = self.chamar(pagina([]), consulta='x')
+        for texto in (falha, vazio):
+            self.assertIn('site:tcu.gov.br', texto)
+            self.assertIn('A = TCU com inteiro teor', texto)
+            self.assertIn('nunca de memória, nem de outro tribunal', texto)
+            self.assertIn('a conferir', texto)
+
     def test_erro_http_vira_falha_tecnica(self):
         erro = urllib.error.HTTPError('u', 503, 'indisponível', {}, None)
         with mock.patch.object(tcu.urllib.request, 'urlopen', side_effect=erro):

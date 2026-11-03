@@ -23,7 +23,7 @@ Não invente lei, artigo, súmula ou acórdão. O catálogo único de fontes é 
 - `resolvida`: histórico; use a fonte indicada na própria linha.
 - `n/a`: fonte interna ou prova de mercado, que depende do caso.
 
-Fonte ausente do catálogo só entra depois de conferida na fonte oficial nesta execução. Número de artigo lembrado pelo modelo não equivale a texto verificado. Inteiro teor de acórdão ou texto de súmula aberto pela pesquisa de jurisprudência do TCU nesta execução conta como conferência na fonte oficial (ver `references/capacidades.md`); enunciado ou trecho de busca, não.
+Fonte ausente do catálogo só entra depois de conferida na fonte oficial nesta execução. Número de artigo lembrado pelo modelo não equivale a texto verificado. Inteiro teor de acórdão ou texto de súmula aberto pela pesquisa de jurisprudência do TCU nesta execução conta como conferência na fonte oficial (ver `references/capacidades.md`); enunciado ou trecho de busca, não. O mesmo vale para o artigo da Lei 14.133 aberto pela consulta ao texto da lei: conta como `conferido nesta execução`; o trecho que aparece na busca por assunto, não.
 
 - **Transcrição só do que foi aberto.** Texto entre aspas de lei, súmula ou acórdão só entra se a fonte oficial foi aberta nesta execução e o trecho foi copiado dela. Sem isso, use paráfrase sem aspas, marcada `a conferir`. Nunca transcreva de memória, nem quando a consulta falhar.
 - **Status só os do catálogo.** Use `conferido nesta execução` (fonte aberta agora), `a conferir` ou os status do catálogo acima. "Conferido no catálogo" não é status: o catálogo registra uma conferência anterior.

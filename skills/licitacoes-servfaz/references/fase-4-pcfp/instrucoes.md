@@ -76,7 +76,7 @@ Não existe template fixo para a carta — ela é sempre gerada a partir da list
 - Tom formal e respeitoso, dirigido ao pregoeiro.
 - Vai no corpo do e-mail, não como documento anexo separado — o time técnico do órgão já sabe localizar os pontos indicados no corpo do texto.
 - Organizada como listagem das inconsistências identificadas, cada uma explicando objetivamente o que diverge e por quê (o critério, não o número do módulo).
-- Cite a fonte de cada critério (edital, CCT, comprovante) conforme `references/regras-gerais.md`. Fundamento legal só entra se constar do material ou de `references/estudo/catalogo-fontes.md` com status conferido; caso contrário, omita ou marque como pendente de validação jurídica.
+- Cite a fonte de cada critério (edital, CCT, comprovante) conforme `references/regras-gerais.md`. Fundamento legal só entra se constar do material ou de `references/estudo/catalogo-fontes.md` com status conferido; caso contrário, omita ou marque como pendente de validação jurídica. Artigo da Lei 14.133 transcrito na carta passa antes pela consulta ao texto da lei (`references/capacidades.md`).
 - Não inclua nenhuma recomendação sobre enviar a carta ou guardá-la para recurso — isso é decisão humana, fora do escopo desta fase.
 
 ## Etapa 3: validação e decisão final (fora do escopo automatizado)

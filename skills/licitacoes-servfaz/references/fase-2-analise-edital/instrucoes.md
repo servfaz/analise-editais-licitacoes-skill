@@ -344,6 +344,7 @@ de inexequibilidade e diligências; e quaisquer outros riscos, evidentes ou ocul
 > tiver segurança e, se não tiver, sinalize que **exige validação jurídica humana**.
 > Precedente do TCU só com número conferido pela pesquisa de jurisprudência nesta execução
 > (roteiro em `references/capacidades.md`); sem ela, "exige validação jurídica humana".
+> Artigo da Lei 14.133 só depois de aberto pela consulta ao texto da lei (mesmo roteiro).
 
 **A. Pontos de Impugnação (cláusulas restritivas ou ilegais)**
 

@@ -29,7 +29,7 @@ Não use este fluxo para atacar uma regra do edital antes da decisão (impugnaç
 
 Não há instalação ou credencial própria. A análise parte dos arquivos anexados ao chat e de um briefing breve. O núcleo do briefing é: **decisão contestada**, **problema percebido** e **efeito alegado sobre a disputa**. A **providência pretendida** é opcional. Se algum desses elementos estiver ausente e não puder ser extraído dos documentos, pergunte somente o que for material.
 
-Web Search pode ser usado quando disponível para verificar fontes públicas pertinentes. Para jurisprudência do TCU, use a pesquisa de jurisprudência quando estiver exposta no ambiente, pelo roteiro de `references/capacidades.md`; não presuma que está instalada e, sem ela, mantenha o precedente `a conferir`. A ferramenta específica para gerar `.docx` com o modelo da empresa também ainda depende de implementação. Se não estiver disponível, entregue Markdown no chat.
+Web Search pode ser usado quando disponível para verificar fontes públicas pertinentes. Para jurisprudência do TCU e para o texto da Lei 14.133, use a pesquisa de jurisprudência e a consulta ao texto da lei quando estiverem expostas no ambiente, pelos roteiros de `references/capacidades.md`; não presuma que estão instaladas e, sem elas, mantenha o precedente ou o dispositivo `a conferir`. A ferramenta específica para gerar `.docx` com o modelo da empresa também ainda depende de implementação. Se não estiver disponível, entregue Markdown no chat.
 
 ## How to Run
 

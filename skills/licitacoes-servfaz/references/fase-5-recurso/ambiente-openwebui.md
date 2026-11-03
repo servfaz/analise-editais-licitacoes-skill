@@ -15,7 +15,7 @@ Esta Skill foi preparada para OpenWebUI v0.11.4 em imagem Docker, com modelo ser
 - Não se exige auditoria de fórmula/célula em planilhas. Não alegue que fez esse tipo de validação.
 - Knowledge Bases podem ser adicionadas no futuro, mas a primeira versão não deve depender delas.
 - Web Search está habilitado conforme informado, mas confirme se o provedor, o modelo/rota e o chat atual permitem pesquisa. Só declare pesquisa realizada se uma fonte foi efetivamente aberta/consultada.
-- A pesquisa de jurisprudência do TCU é a Tool **Jurisprudência TCU Servfaz** (jurisprudência selecionada, súmulas, busca e inteiro teor de acórdãos), quando instalada e ligada no modelo. Use-a pelo roteiro de `references/capacidades.md`. Sem ela, recorra a fontes oficiais acessíveis e deixe claro o alcance. Não invente nome, parâmetros ou resultados.
+- A pesquisa de jurisprudência do TCU e o texto da Lei 14.133 vêm da Tool **Fontes oficiais Servfaz** (jurisprudência selecionada, súmulas, busca e inteiro teor de acórdãos; busca na lei e texto vigente do dispositivo), quando instalada e ligada no modelo. Use-a pelos roteiros de `references/capacidades.md`. Sem ela, recorra a fontes oficiais acessíveis e deixe claro o alcance. Não invente nome, parâmetros ou resultados.
 - A saída `.docx` será uma ferramenta separada com modelo/timbre ainda a desenvolver. Até existir ferramenta específica para recurso, a saída disponível é Markdown. Não use por engano conversor destinado a impugnação.
 
 ## Segurança e implantação

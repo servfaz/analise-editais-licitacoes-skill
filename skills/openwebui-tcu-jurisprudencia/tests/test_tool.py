@@ -93,8 +93,10 @@ class BuscarAcordaos(unittest.TestCase):
         vazio, _ = self.chamar(pagina([]), consulta='x')
         for texto in (falha, vazio):
             self.assertIn('site:tcu.gov.br', texto)
-            self.assertIn('A = TCU com inteiro teor', texto)
+            self.assertIn('A = o próprio acórdão em pesquisa.apps.tcu.gov.br', texto)
             self.assertIn('nunca de memória, nem de outro tribunal', texto)
+            self.assertIn('O trecho do resultado de busca não é fonte aberta', texto)
+            self.assertIn('licitacoesecontratos.tcu.gov.br', texto.split('B = ')[1].split('C = ')[0])
             self.assertIn('a conferir', texto)
 
     def test_erro_http_vira_falha_tecnica(self):

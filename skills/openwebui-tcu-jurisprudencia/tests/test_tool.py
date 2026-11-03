@@ -315,6 +315,10 @@ class ObterDispositivoLei(unittest.TestCase):
         self.assertNotIn('Suprimido', texto)
         self.assertIn('## Lei 14.133/2021, art. 3º, inciso I', texto)
 
+    def test_rotulo_repetido_no_texto_nao_duplica(self):
+        d = tcu.montar_dispositivo(no('art1_par4', versao('§ 4º Os valores depositados são impenhoráveis.', '§ 4º')))
+        self.assertEqual(d.texto, 'Os valores depositados são impenhoráveis.')
+
     def test_paragrafo_unico_e_aspa_da_lei_alteradora(self):
         texto, _ = self.chamar('14133', '3', paragrafo='único')
         self.assertIn('Parágrafo único. Parágrafo com aspa da lei alteradora.\n', texto)
@@ -374,6 +378,93 @@ class ObterDispositivoLei(unittest.TestCase):
         self.assertEqual(tcu.chave_dispositivo('75', inciso='XVII'), 'art75_cpt_inc17')
         self.assertEqual(tcu.chave_dispositivo('184-A'), 'art184-1')
         self.assertEqual(tcu.chave_dispositivo('1', '2', 'III', 'b'), 'art1_par2_inc3_ali2')
+        self.assertEqual(tcu.chave_dispositivo('174', '3º-A'), 'art174_par3-1')
+        self.assertEqual(tcu.chave_dispositivo('1', inciso='IV-A'), 'art1_cpt_inc4-1')
+
+
+
+class BuscarNaLei(unittest.TestCase):
+    def setUp(self):
+        tcu._CACHE_LEIS.clear()
+        self.tools = tcu.Tools()
+
+    def buscar(self, termos, corpo=LEI_FICTICIA, lei='14133'):
+        with mock.patch.object(tcu.urllib.request, 'urlopen', return_value=resposta(corpo)) as urlopen:
+            texto = rodar(self.tools.buscar_na_lei(lei, termos))
+        return texto, urlopen
+
+    def itens(self, texto):
+        return [l for l in texto.splitlines() if l[:1].isdigit()]
+
+    def test_acha_inciso_sem_acento_e_com_citacao_pronta(self):
+        texto, _ = self.buscar('condicionar pagamento quitacao')
+        self.assertEqual(self.itens(texto)[0],
+                         '1. **art. 1º, inciso II**: condicionar o pagamento à quitação;')
+        self.assertIn('Abra o artigo com obter_dispositivo_lei antes de citar', texto)
+        self.assertIn(tcu.AVISO_LEI, texto)
+
+    def test_frase_entre_aspas_e_obrigatoria(self):
+        texto, _ = self.buscar('"entre outras medidas"')
+        self.assertEqual(len(self.itens(texto)), 1)
+        self.assertIn('**art. 1º**:', texto)
+        self.assertIn('Nenhum dispositivo', self.buscar('"medidas entre outras"')[0])
+
+    def test_radical_casa_variacoes_e_palavra_curta_nao_vira_prefixo_amplo(self):
+        self.assertIn('art. 1º, § 2º', self.buscar('regras alteradas')[0])
+        self.assertIn('art. 2º, inciso I', self.buscar('dia')[0])
+        corpo = {'dateModified': '2026-07-20', 'hasPart': [
+            no('art1', versao(nome='Art. 1º'), [no('art1_cpt', versao('O contrato será assinado.'))])]}
+        self.assertIn('Nenhum dispositivo', self.buscar('conta', corpo=corpo)[0])
+
+    def test_termo_raro_pesa_mais_que_termo_comum(self):
+        # Como na lei real: "prazo" e "edital" aparecem em muitos dispositivos, "impugnar" em poucos.
+        comuns = [no(f'art{i}', versao(nome=f'Art. {i}'), [no(f'art{i}_cpt', versao(f'O edital fixará o prazo {i}.'))])
+                  for i in range(1, 11)]
+        raro = no('art11', versao(nome='Art. 11'), [no('art11_cpt', versao('Qualquer pessoa pode impugnar o edital.'))])
+        outros = [no(f'art{i}', versao(nome=f'Art. {i}'), [no(f'art{i}_cpt', versao(f'Regra geral número {i}.'))])
+                  for i in range(12, 40)]
+        texto, _ = self.buscar('prazo impugnação edital', corpo={'dateModified': '2026-07-20',
+                                                                'hasPart': comuns + [raro] + outros})
+        self.assertIn('**art. 11**', self.itens(texto)[0])
+
+    def test_dispositivo_suprimido_fica_fora(self):
+        texto, _ = self.buscar('hipótese')
+        self.assertIn('hipótese da lei', texto)
+        self.assertNotIn('Suprimido', texto)
+        self.assertNotIn('hipótese da MP', texto)
+        tcu._CACHE_LEIS.clear()
+        corpo = {'dateModified': '2026-07-20', 'hasPart': [no('art1', versao(nome='Art. 1º'), [
+            no('art1_cpt', versao('Regras de transição:'), [
+                no('art1_cpt_inc1', versao('transição para órgãos;', 'I –')),
+                no('art1_cpt_inc2', [versao('transição da MP;', 'II –', 'Insertion_Version', '2023-03-31', fora=True),
+                                     versao('(Suprimido)', 'II –', 'Suppression_Version', '2023-08-02')]),
+            ])])]}
+        texto, _ = self.buscar('suprimido transição', corpo=corpo)
+        self.assertNotIn('inciso II', texto)
+
+    def test_sem_resultado_lei_fora_e_falha_tem_mensagens_distintas(self):
+        vazio, _ = self.buscar('palavrainexistente')
+        self.assertIn('não conclua que a lei não trata do assunto', vazio)
+        fora, urlopen = self.buscar('garantia', lei='LC 123')
+        self.assertIn('a conferir', fora)
+        urlopen.assert_not_called()
+        tcu._CACHE_LEIS.clear()
+        falha, _ = self.buscar('garantia', corpo='<html>bloqueado</html>')
+        self.assertIn('falhou', falha)
+
+    def test_busca_reaproveita_a_lei_em_cache(self):
+        with mock.patch.object(tcu.urllib.request, 'urlopen', return_value=resposta(LEI_FICTICIA)) as urlopen:
+            rodar(self.tools.obter_dispositivo_lei('14133', '1'))
+            rodar(self.tools.buscar_na_lei('14133', 'garantia'))
+        self.assertEqual(urlopen.call_count, 1)
+
+    def test_limite_de_resultados(self):
+        self.tools.valves.max_resultados = 1
+        texto, _ = self.buscar('de para o')  # só palavras sem conteúdo
+        self.assertIn('Nenhum dispositivo', texto)
+        texto, _ = self.buscar('garantia pagamento')
+        self.assertEqual(len(self.itens(texto)), 1)
+        self.assertIn('Mostrando 1 de 2', texto)
 
 
 if __name__ == '__main__':

@@ -13,6 +13,7 @@ version: 0.2.0
 import asyncio
 import html
 import json
+import math
 import re
 import time
 import unicodedata
@@ -94,6 +95,8 @@ AVISO_LEI = ('_Texto montado a partir do registro do Congresso Nacional no norma
 FALHA_LEI = ('A consulta ao texto da lei falhou (erro técnico: {motivo}). Não transcreva o dispositivo de memória: '
              'cite-o sem aspas e marque "a conferir".')
 ROMANOS = {'i': 1, 'v': 5, 'x': 10, 'l': 50, 'c': 100}
+STOPWORDS = {'de', 'da', 'do', 'das', 'dos', 'em', 'na', 'no', 'nas', 'nos', 'para', 'por', 'pela', 'pelo', 'que',
+             'com', 'sem', 'aos', 'uma', 'umas', 'uns', 'ser', 'sua', 'seu', 'lei', 'art', 'artigo'}
 _CACHE_LEIS: dict = {}  # urn -> (instante, Lei); vive enquanto o módulo estiver carregado no Open WebUI
 
 
@@ -166,6 +169,26 @@ def texto_dispositivo(texto) -> str:
     return texto
 
 
+def normalizar_busca(texto: str) -> str:
+    """Minúsculas, sem acentos e sem pontuação: "Retenção" e "retencao" batem."""
+    texto = unicodedata.normalize('NFKD', texto or '').encode('ascii', 'ignore').decode().lower()
+    return ' '.join(re.sub(r'[^a-z0-9 ]+', ' ', texto).split())
+
+
+def _raiz(palavra: str) -> str:
+    """Radical por prefixo (palavra sem as 3 últimas letras, mínimo de 5): "impugnação" bate com "impugnar",
+    "trabalhistas" com "trabalhista"; palavras curtas ficam inteiras para "conta" não bater com "contrato"."""
+    return palavra if len(palavra) <= 5 else palavra[:max(5, len(palavra) - 3)]
+
+
+def _trecho(texto: str, termos: list, tamanho: int = 260) -> str:
+    normalizado = normalizar_busca(texto)
+    pos = min((normalizado.find(t) for t in termos if t and normalizado.find(t) >= 0), default=0)
+    inicio = max(0, pos - 60)
+    trecho = texto[inicio:inicio + tamanho].strip()
+    return ('…' if inicio else '') + trecho + ('…' if inicio + tamanho < len(texto) else '')
+
+
 def _lista(valor) -> list:
     return valor if isinstance(valor, list) else [valor] if isinstance(valor, dict) else []
 
@@ -177,8 +200,11 @@ def montar_dispositivo(no: dict) -> Dispositivo:
     versao, vigente = versao_vigente(versoes)
     tipo = str(versao.get('legislationType') or '')
     rotulo = limpar(versao.get('name')) or next((limpar(v.get('name')) for v in reversed(versoes) if v.get('name')), '')
+    texto = texto_dispositivo(versao.get('text'))
+    if rotulo and texto.startswith(rotulo.rstrip('.') + ' '):  # a fonte repete o rótulo no texto (art. 121, § 4º)
+        texto = texto[len(rotulo.rstrip('.')):].lstrip(' .')
     filhos = escolher_por_posicao([montar_dispositivo(f) for f in _lista(no.get('hasPart'))])
-    return Dispositivo(chave=chave, rotulo=rotulo, texto=texto_dispositivo(versao.get('text')),
+    return Dispositivo(chave=chave, rotulo=rotulo, texto=texto,
                        nota=nota_da_versao(versao, versoes) if vigente else '(sem versão em vigor)',
                        link=no.get('@id') or '', filhos=filhos, vigente=vigente,
                        suprimido='Suppression' in tipo and 'Applicability' not in tipo)
@@ -199,16 +225,56 @@ class Lei:
     def __init__(self, raiz: Dispositivo, urn: str, nome: str, data_registro: str):
         self.urn, self.nome, self.data_registro = urn, nome, data_registro
         self.artigos: dict = {}  # chave do artigo -> (Dispositivo, caminho na estrutura)
+        self.trechos: list = []  # (citação, texto normalizado, texto original) de cada dispositivo com texto
         self._indexar(raiz, [])
 
     def _indexar(self, d: Dispositivo, caminho: list):
         if re.fullmatch(r'art\d+(-\d+)?', d.chave):
-            self.artigos.setdefault(d.chave, (d, caminho))
+            if d.chave not in self.artigos:
+                self.artigos[d.chave] = (d, caminho)
+                self._indexar_trechos(d, d)
             return
         if re.match(r'(prt|liv|tit|cap|sec|sub)\d', d.chave):
             caminho = caminho + [' - '.join(x for x in (d.rotulo, d.texto) if x)]
         for f in d.filhos:
             self._indexar(f, caminho)
+
+    def _indexar_trechos(self, artigo: Dispositivo, d: Dispositivo):
+        if d.texto and not d.suprimido:
+            self.trechos.append((rotulo_citacao('', artigo, d), normalizar_busca(d.texto), d.texto))
+        for f in d.filhos:
+            self._indexar_trechos(artigo, f)
+
+    def buscar(self, termos: str, limite: int) -> tuple:
+        """Dispositivos que contêm as frases entre aspas e mais palavras da consulta, em ordem de aderência."""
+        frases = [normalizar_busca(f) for f in re.findall(r'"([^"]+)"', termos or '')]
+        frases = [f for f in frases if f]
+        soltas = [p for p in normalizar_busca(re.sub(r'"[^"]*"', ' ', termos or '')).split()
+                  if p not in STOPWORDS and len(p) > 2]
+        if not frases and not soltas:
+            return [], 0
+        consulta = ' '.join(soltas)
+        tokens_por_trecho = [set(normalizado.split()) for _, normalizado, _ in self.trechos]
+        # Termo raro pesa mais (como "impugnar" diante de "prazo" e "edital", que aparecem em toda a lei).
+        peso = {}
+        for p in soltas:
+            presentes = sum(1 for tokens in tokens_por_trecho if any(t.startswith(_raiz(p)) for t in tokens))
+            peso[p] = math.log((len(self.trechos) + 1) / (presentes + 1)) + 1
+        achados = []
+        for ordem, ((citacao, normalizado, original), tokens) in enumerate(zip(self.trechos, tokens_por_trecho)):
+            if any(f not in normalizado for f in frases):
+                continue
+            # Palavra exata vale um pouco mais que o radical ("impugnar" para "impugnação"); as palavras na mesma
+            # sequência da consulta ganham bônus.
+            casadas = {p: (2 if p in tokens else 1.5) for p in soltas
+                       if p in tokens or any(t.startswith(_raiz(p)) for t in tokens)}
+            if soltas and len(casadas) < max(1, -(-len(soltas) // 2)):
+                continue
+            pontos = (10 * len(frases) + sum(peso[p] * v for p, v in casadas.items())
+                      + (5 if len(soltas) > 1 and consulta in normalizado else 0))
+            achados.append((-pontos, ordem, citacao, original))
+        achados.sort()
+        return [(c, o) for _, _, c, o in achados[:limite]], len(achados)
 
     @classmethod
     def de_json(cls, dados: dict, urn: str, nome: str) -> 'Lei':
@@ -249,9 +315,22 @@ def _para_romano(n: int) -> str:
     return saida
 
 
-def _numero(valor) -> Optional[int]:
-    valor = re.sub(r'(?i)\b(inciso|inc|par[aá]grafo|§)\b|[\s.º°§ªo]', '', str(valor or ''))
-    return int(valor) if valor.isdigit() else _romano(valor)
+def _numero(valor) -> Optional[str]:
+    """'3', '§ 3º', 'II' -> '3' / '2'; com letra ('3º-A', 'IV-A') -> '3-1' / '4-1', como a API numera."""
+    valor = re.sub(r'(?i)\b(inciso|inc|par[aá]grafo)\b|[\s.º°§ª]', '', str(valor or ''))
+    m = re.fullmatch(r'([0-9]+|[ivxlcIVXLC]+)-?([a-zA-Z])?', valor)
+    if not m:
+        return None
+    n = int(m.group(1)) if m.group(1).isdigit() else _romano(m.group(1))
+    if not n:
+        return None
+    return f'{n}' + (f'-{ord(m.group(2).lower()) - 96}' if m.group(2) else '')
+
+
+def _com_letra(numero: str, formato) -> str:
+    """'3-1' -> formato(3) + '-A': rótulo de dispositivo inserido com letra."""
+    base, _, letra = numero.partition('-')
+    return formato(int(base)) + (f'-{chr(64 + int(letra))}' if letra.isdigit() else '')
 
 
 def chave_artigo(artigo) -> Optional[str]:
@@ -315,14 +394,15 @@ def renderizar(d: Dispositivo, nota_herdada: str = '') -> list:
 
 def rotulo_citacao(nome_lei: str, artigo: Dispositivo, alvo: Dispositivo) -> str:
     partes = [nome_lei, re.sub(r'\.$', '', artigo.rotulo).replace('Art.', 'art.')]
+    # O caput não entra na citação: "art. 121, inciso II" já é o inciso do caput.
     for trecho in alvo.chave.split('_')[1:]:
         if trecho == 'par1u':
             partes.append('parágrafo único')
-        elif trecho.startswith('par'):
-            partes.append(f'§ {trecho[3:]}º' if int(trecho[3:]) < 10 else f'§ {trecho[3:]}')
-        elif trecho.startswith('inc'):
-            partes.append('inciso ' + _para_romano(int(trecho[3:])))
-        elif trecho.startswith('ali'):
+        elif re.fullmatch(r'par\d+(-\d+)?', trecho):
+            partes.append('§ ' + _com_letra(trecho[3:], lambda n: f'{n}º' if n < 10 else str(n)))
+        elif re.fullmatch(r'inc\d+(-\d+)?', trecho):
+            partes.append('inciso ' + _com_letra(trecho[3:], _para_romano))
+        elif re.fullmatch(r'ali\d+', trecho):
             partes.append(f'alínea "{chr(96 + int(trecho[3:]))}"')
     return ', '.join(p for p in partes if p)
 
@@ -610,3 +690,34 @@ class Tools:
         partes += [f'Fonte: normas.leg.br (Congresso Nacional), registro de {texto_lei.data_registro} · '
                    f'[abrir]({alvo.link or artigo_d.link})', '', corpo, '', AVISO_LEI]
         return '\n'.join(partes)
+
+    async def buscar_na_lei(self, lei: str, termos: str, __event_emitter__=None) -> str:
+        """
+        Procura no texto vigente da Lei 14.133/2021 os dispositivos sobre um assunto, quando não se sabe o número
+        do artigo (ex.: "conta vinculada", "retenção pagamento obrigações trabalhistas"). Depois, abra o artigo
+        encontrado com obter_dispositivo_lei antes de citar: o resultado aqui é só um trecho.
+        :param lei: "14133" (por enquanto só a Lei 14.133/2021 está disponível).
+        :param termos: palavras do assunto; frases exatas entre aspas (ex.: "dedicação exclusiva").
+        """
+        chave_lei = normalizar_lei(lei)
+        if not chave_lei:
+            disponiveis = ', '.join(nome for _, nome in LEIS.values())
+            return (f'A consulta de legislação só tem o texto estruturado de: {disponiveis}. Para "{lei}", cite '
+                    'sem aspas e marque "a conferir".')
+        try:
+            texto_lei = await self._carregar_lei(chave_lei, __event_emitter__)
+        except FalhaConsulta as e:
+            return FALHA_LEI.format(motivo=e)
+        achados, total = texto_lei.buscar(termos, self.valves.max_resultados)
+        if not achados:
+            return (f'Nenhum dispositivo da {texto_lei.nome} contém esses termos. Tente sinônimos ou menos palavras; '
+                    'não conclua que a lei não trata do assunto só por esta busca.')
+        destaque = [normalizar_busca(f) for f in re.findall(r'"([^"]+)"', termos)] + \
+                   [_raiz(p) for p in normalizar_busca(termos.replace('"', ' ')).split() if p not in STOPWORDS]
+        destaque.sort(key=len, reverse=True)
+        linhas = [f'## {texto_lei.nome}: dispositivos sobre "{termos}"', '']
+        for i, (citacao, original) in enumerate(achados, start=1):
+            linhas.append(f'{i}. **{citacao}**: {_trecho(original, destaque)}')
+        linhas += ['', f'Mostrando {len(achados)} de {total} dispositivo(s), dos mais aderentes aos menos.',
+                   'Abra o artigo com obter_dispositivo_lei antes de citar e leia todos os incisos.', '', AVISO_LEI]
+        return '\n'.join(linhas)

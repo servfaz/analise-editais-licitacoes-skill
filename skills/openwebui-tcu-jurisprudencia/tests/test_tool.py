@@ -12,6 +12,8 @@ PACOTE = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location('tcu_jurisprudencia', PACOTE / 'tools' / 'tcu_jurisprudencia.py')
 tcu = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(tcu)
+# A nova tentativa espera 1 s entre chamadas; nos testes, sem espera.
+mock.patch.object(tcu.time, 'sleep', lambda *_: None).start()
 
 # Respostas no formato da API conferido em 2026-10-30, com dados fictícios (sem nomes reais).
 ACORDAO_RESUMIDO = {
@@ -88,6 +90,26 @@ class BuscarAcordaos(unittest.TestCase):
         self.assertIn('de memória', texto)
         self.assertNotEqual(texto, tcu.NENHUM)
 
+    def test_nova_tentativa_quando_o_tcu_nao_responde(self):
+        corpo = resposta(pagina([ACORDAO_RESUMIDO]))
+        with mock.patch.object(tcu.urllib.request, 'urlopen', side_effect=[TimeoutError('timed out'), corpo]) as u:
+            texto = rodar(self.tools.buscar_acordaos_tcu(consulta='x'))
+        self.assertEqual(u.call_count, 2)
+        self.assertIn('Acórdão 1505/2026-Plenário', texto)
+
+    def test_desiste_depois_das_tentativas(self):
+        with mock.patch.object(tcu.urllib.request, 'urlopen', side_effect=TimeoutError('timed out')) as u:
+            texto = rodar(self.tools.buscar_acordaos_tcu(consulta='x'))
+        self.assertEqual(u.call_count, 3)
+        self.assertIn('após 3 tentativa(s)', texto)
+
+    def test_erro_http_do_cliente_nao_repete(self):
+        erro = urllib.error.HTTPError('u', 404, 'não encontrado', {}, None)
+        with mock.patch.object(tcu.urllib.request, 'urlopen', side_effect=erro) as u:
+            texto = rodar(self.tools.buscar_acordaos_tcu(consulta='x'))
+        self.assertEqual(u.call_count, 1)
+        self.assertIn('HTTP 404', texto)
+
     def test_falha_e_vazio_trazem_o_plano_b_com_os_niveis(self):
         falha, _ = self.chamar('<html>Requisição rejeitada</html>', consulta='x')
         vazio, _ = self.chamar(pagina([]), consulta='x')
@@ -97,6 +119,8 @@ class BuscarAcordaos(unittest.TestCase):
             self.assertIn('nunca de memória, nem de outro tribunal', texto)
             self.assertIn('O trecho do resultado de busca não é fonte aberta', texto)
             self.assertIn('na resposta, não mostre as letras', texto)
+            self.assertIn('urn:lex:br:tribunal.contas.uniao', texto)
+            self.assertIn('nunca vai entre aspas nem como ementa', texto)
             self.assertIn('confiança em palavras (alta, média ou baixa)', texto)
             self.assertIn('licitacoesecontratos.tcu.gov.br', texto.split('B = ')[1].split('C = ')[0])
             self.assertIn('a conferir', texto)
@@ -428,6 +452,10 @@ class BuscarNaLei(unittest.TestCase):
         corpo = {'dateModified': '2026-07-20', 'hasPart': [
             no('art1', versao(nome='Art. 1º'), [no('art1_cpt', versao('O contrato será assinado.'))])]}
         self.assertIn('Nenhum dispositivo', self.buscar('conta', corpo=corpo)[0])
+
+    def test_frase_entre_aspas_com_palavra_que_nao_aparece(self):
+        texto, _ = self.buscar('"entre outras medidas" pagamento')
+        self.assertIn('**art. 1º**', texto)
 
     def test_termo_raro_pesa_mais_que_termo_comum(self):
         # Como na lei real: "prazo" e "edital" aparecem em muitos dispositivos, "impugnar" em poucos.

@@ -2,7 +2,7 @@
 title: Fontes oficiais Servfaz
 description: Pesquisa acórdãos, jurisprudência selecionada e súmulas do TCU e traz o texto vigente da Lei 14.133/2021 para fundamentar impugnações e recursos.
 author: Servfaz
-version: 0.2.3
+version: 0.2.4
 """
 # Import manual em Workspace > Tools; Function Calling = Native no modelo (ver ../INSTALACAO.md).
 # Usa a API REST pública por trás de pesquisa.apps.tcu.gov.br. O firewall do TCU barra User-Agent genérico
@@ -33,7 +33,9 @@ AVISO = ('_Resultado da Pesquisa de Jurisprudência do TCU. É candidato, não p
 # o arquivo da skill que descreve o plano (teste de 03/11/2026 no Open WebUI).
 PLANO_B = ('Plano B, se houver busca na web: procure primeiro em fontes oficiais (site:tcu.gov.br, '
            'site:lexml.gov.br) e abra a página de cada resultado que for usar (fetch_url). O trecho do resultado '
-           'de busca não é fonte aberta: sem abrir a página, vale no máximo C. Classifique pelo domínio da página '
+           'de busca não é fonte aberta: sem abrir a página, vale no máximo C, e nunca vai entre aspas nem como '
+           'ementa. No LexML, só é fonte oficial a página com URN do TCU (urn:lex:br:tribunal.contas.uniao); '
+           'registro de biblioteca, revista ou livro (rede.virtual.bibliotecas) é doutrina: C. Classifique pelo domínio da página '
            'aberta: A = o próprio acórdão em pesquisa.apps.tcu.gov.br ou contas.tcu.gov.br (confiança alta; só '
            'ele conta como "conferido"); B = oficial derivada, como LexML, licitacoesecontratos.tcu.gov.br, outra '
            'página do tcu.gov.br que cita o acórdão ou outro órgão público (confiança média: número e ementa; '
@@ -285,7 +287,8 @@ class Lei:
             # sequência da consulta ganham bônus.
             casadas = {p: (2 if p in tokens else 1.5) for p in soltas
                        if p in tokens or any(t.startswith(_raiz(p)) for t in tokens)}
-            if soltas and len(casadas) < max(1, -(-len(soltas) // 2)):
+            # Com frase entre aspas, as palavras soltas só ordenam: a frase já delimita o assunto.
+            if soltas and not frases and len(casadas) < max(1, -(-len(soltas) // 2)):
                 continue
             pontos = (10 * len(frases) + sum(peso[p] * v for p, v in casadas.items())
                       + (5 if len(soltas) > 1 and consulta in normalizado else 0))
@@ -429,7 +432,8 @@ class Tools:
         base_url: str = Field(default=f'{PORTAL}/rest/publico', description='API REST da Pesquisa do TCU')
         user_agent: str = Field(default='servfaz-fontes-oficiais/0.2 (+contato Servfaz)',
                                 description='Identificação honesta do cliente; o firewall do TCU barra UA genérico')
-        timeout_s: float = Field(default=20.0, description='Tempo máximo de cada consulta, em segundos')
+        timeout_s: float = Field(default=15.0, description='Tempo máximo de cada tentativa, em segundos')
+        tentativas: int = Field(default=3, description='Tentativas por consulta quando a rede ou o tempo falham')
         max_resultados: int = Field(default=10, description='Itens por página nas buscas')
         max_chars_texto: int = Field(default=12000, description='Limite de cada seção do inteiro teor')
         normas_url: str = Field(default=f'{NORMAS}/api/public', description='API do normas.leg.br (texto da lei)')
@@ -441,15 +445,24 @@ class Tools:
     # ---- cliente HTTP -------------------------------------------------------------------------------------
 
     def _baixar_json(self, url: str):
+        # O TCU às vezes deixa uma requisição pendurada sem resposta (03/11/2026: a mesma consulta levou 1 s,
+        # 1 s e passou de 60 s). Esperar mais não adianta; uma nova tentativa costuma responder em 1 s.
         pedido = urllib.request.Request(url, headers={'User-Agent': self.valves.user_agent,
                                                       'Accept': 'application/json'})
-        try:
-            with urllib.request.urlopen(pedido, timeout=self.valves.timeout_s) as resposta:
-                corpo = resposta.read().decode('utf-8', 'replace')
-        except urllib.error.HTTPError as e:
-            raise FalhaConsulta(f'HTTP {e.code}') from e
-        except (urllib.error.URLError, TimeoutError, OSError) as e:
-            raise FalhaConsulta(f'rede ou tempo esgotado: {getattr(e, "reason", e)}') from e
+        tentativas = max(1, int(self.valves.tentativas or 1))
+        for tentativa in range(1, tentativas + 1):
+            try:
+                with urllib.request.urlopen(pedido, timeout=self.valves.timeout_s) as resposta:
+                    corpo = resposta.read().decode('utf-8', 'replace')
+                break
+            except urllib.error.HTTPError as e:
+                if e.code < 500 or tentativa == tentativas:
+                    raise FalhaConsulta(f'HTTP {e.code}') from e
+            except (urllib.error.URLError, TimeoutError, OSError) as e:
+                if tentativa == tentativas:
+                    raise FalhaConsulta(f'rede ou tempo esgotado após {tentativas} tentativa(s): '
+                                        f'{getattr(e, "reason", e)}') from e
+            time.sleep(1)
         try:
             dados = json.loads(corpo)
         except ValueError as e:

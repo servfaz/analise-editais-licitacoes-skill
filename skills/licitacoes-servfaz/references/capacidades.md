@@ -50,10 +50,12 @@ Use só depois de a pesquisa do TCU falhar (erro técnico) ou não trazer result
 1. Busque primeiro nas fontes oficiais, restringindo o domínio: `site:tcu.gov.br`, `site:lexml.gov.br` (ex.: `site:lexml.gov.br acórdão 964/2012 TCU`). Só depois, se preciso, faça a busca aberta, apenas para achar o número do precedente.
 2. Abra a página de cada resultado que for usar (no Open WebUI, `fetch_url`). O trecho do resultado de busca não é fonte aberta: sem abrir, vale no máximo C. Classifique cada fonte pelo nível de confiança da tabela abaixo, pelo domínio da página aberta, não pelo título do resultado. Atribua uma tese a um acórdão só se o texto aberto a ligar a ele.
 3. Confirme número, ano, colegiado e data em fonte de nível A ou B antes de usar o precedente. Divergência entre fontes (ex.: colegiado diferente) é sinal de erro: prevalece a fonte de nível mais alto.
-4. Apresente ao analista cada precedente com o nível e a confiança: `Acórdão N/AAAA-Colegiado (nível B, confiança média: ementa no LexML; inteiro teor a conferir)`.
+4. Apresente ao analista cada precedente com a confiança em palavras e o motivo em linguagem simples, sem as letras dos níveis: `Acórdão N/AAAA-Colegiado (confiança média: ementa oficial no LexML; texto integral do acórdão a conferir)`.
 5. Na consulta, valem as mesmas regras da pesquisa do TCU: só termos jurídicos, poucas buscas.
 
 ### Níveis de confiança das fontes
+
+As letras A a D são só para classificação interna: não aparecem na resposta ao analista nem na minuta. Na resposta, use apenas a confiança (alta, média, baixa) e o motivo.
 
 | Nível | Confiança | Fontes | O que pode ser feito |
 | --- | --- | --- | --- |

@@ -1,21 +1,25 @@
 """
-title: Jurisprudência TCU Servfaz
-description: Pesquisa acórdãos, jurisprudência selecionada e súmulas na Pesquisa de Jurisprudência do TCU para fundamentar impugnações e recursos.
+title: Fontes oficiais Servfaz
+description: Pesquisa acórdãos, jurisprudência selecionada e súmulas do TCU e traz o texto vigente da Lei 14.133/2021 para fundamentar impugnações e recursos.
 author: Servfaz
-version: 0.1.1
+version: 0.2.0
 """
 # Import manual em Workspace > Tools; Function Calling = Native no modelo (ver ../INSTALACAO.md).
 # Usa a API REST pública por trás de pesquisa.apps.tcu.gov.br. O firewall do TCU barra User-Agent genérico
 # (ex.: o padrão do curl), respondendo HTTP 200 com HTML de bloqueio: por isso o UA próprio e honesto nas Valves,
 # e HTML no lugar de JSON é tratado como falha técnica, nunca como "nenhum resultado".
+# O texto da Lei 14.133 vem da API do normas.leg.br (Congresso Nacional): a lei inteira em JSON-LD, um nó por
+# dispositivo, com o histórico de versões de cada um; a tool escolhe a versão vigente e guarda a lei em cache.
 import asyncio
 import html
 import json
 import re
+import time
 import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
+from dataclasses import dataclass, field
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -31,8 +35,8 @@ FALHA = ('A consulta ao TCU falhou (erro técnico: {motivo}). Não foi possível
 COLEGIADOS = ('Plenário', 'Primeira Câmara', 'Segunda Câmara')
 
 
-class FalhaTCU(Exception):
-    """Erro técnico na consulta (HTTP, rede, timeout ou bloqueio do firewall)."""
+class FalhaConsulta(Exception):
+    """Erro técnico na consulta (HTTP, rede, timeout, bloqueio do firewall ou resposta fora do formato)."""
 
 
 def limpar(texto) -> str:
@@ -78,38 +82,294 @@ def identificacao(doc: dict) -> str:
     return f"Acórdão {doc.get('NUMACORDAO', '?')}/{doc.get('ANOACORDAO', '?')}-{doc.get('COLEGIADO', '?')}"
 
 
+# ---- Lei 14.133 (normas.leg.br) -----------------------------------------------------------------------------
+
+NORMAS = 'https://normas.leg.br'
+# Só a Lei 14.133 vem com texto estruturado no normas.leg.br (conferido em 2026-11-03); LC 123, CLT, Leis 8.666,
+# 9.784 e 13.303 voltam só com metadados. Acrescente aqui quando a API passar a estruturar outra lei.
+LEIS = {'14133': ('urn:lex:br:federal:lei:2021-04-01;14133', 'Lei 14.133/2021')}
+AVISO_LEI = ('_Texto montado a partir do registro do Congresso Nacional no normas.leg.br, sem valor oficial (o '
+             'oficial é o publicado no DOU). Transcreva só o que está acima e leia o dispositivo inteiro, com '
+             'todos os incisos, antes de concluir._')
+FALHA_LEI = ('A consulta ao texto da lei falhou (erro técnico: {motivo}). Não transcreva o dispositivo de memória: '
+             'cite-o sem aspas e marque "a conferir".')
+ROMANOS = {'i': 1, 'v': 5, 'x': 10, 'l': 50, 'c': 100}
+_CACHE_LEIS: dict = {}  # urn -> (instante, Lei); vive enquanto o módulo estiver carregado no Open WebUI
+
+
+@dataclass
+class Dispositivo:
+    chave: str  # identificador sem o prefixo da lei nem o sufixo da lei de origem, ex.: art121_par3_inc2
+    rotulo: str
+    texto: str
+    nota: str
+    link: str
+    filhos: list = field(default_factory=list)
+    vigente: bool = True
+    suprimido: bool = False
+
+
+def _data_br(data: str) -> str:
+    partes = (data or '').split('-')
+    return '/'.join(reversed(partes)) if len(partes) == 3 else (data or '?')
+
+
+def versao_vigente(versoes: list) -> tuple:
+    """A versão vigente é a mais recente sem a marca NotInForce: a API marca só as versões que saíram de vigor."""
+    if not versoes:
+        return {}, True
+    em_vigor = [v for v in versoes if v.get('legislationLegalForce') != 'NotInForce']
+    candidatas = em_vigor or versoes
+    return max(candidatas, key=lambda v: v.get('legislationDate') or ''), bool(em_vigor)
+
+
+def nota_da_versao(versao: dict, versoes: list) -> str:
+    tipo = str(versao.get('legislationType') or '')
+    if not tipo or tipo == 'Original_Version':
+        return ''
+    data = _data_br(versao.get('legislationDate'))
+    origem = versao.get('legislationConsolidates')
+    origem = limpar(origem.get('name')) if isinstance(origem, dict) and origem.get('name') else ''
+    por = f' por {origem}' if origem else ''
+    if 'Rejected_Veto' in tipo:
+        return f'(veto derrubado; em vigor desde {data})'
+    # Supressão de aplicabilidade afasta o dispositivo só na hipótese da norma de origem (ex.: art. 55 e a
+    # MP 1.221/2024, calamidade): o texto continua em vigor, então é nota, nunca supressão.
+    if 'Applicability_Suppression' in tipo:
+        return f'(aplicação afastada em hipótese específica{por}, em {data}; o texto segue em vigor: confira o alcance)'
+    if 'Suppression' in tipo:
+        return f'(suprimido{por}, em {data})'
+    if 'Court_Decision' in tipo:
+        decisao = next((limpar(v['@reverse']['legislationCourtDecision'].get('name'))
+                        for v in versoes if isinstance(v.get('@reverse'), dict)
+                        and isinstance(v['@reverse'].get('legislationCourtDecision'), dict)), '')
+        return f"(decisão judicial{' - ' + decisao if decisao else ''}, em {data}: confira a interpretação dada)"
+    if 'Vetoed_Text_Change' in tipo:
+        return f'(alteração de {data} vetada; redação mantida)'
+    if 'Text_Restoration' in tipo:
+        return f'(redação restabelecida em {data})'
+    if 'Insertion' in tipo:
+        return f'(incluído{por} em {data})'
+    if 'Text_Indirect_Change' in tipo:
+        return f'(alterado indiretamente{por} em {data})'
+    if 'Text_Change' in tipo or 'Renumbering' in tipo:
+        return f'(redação dada{por} em {data})'
+    return f'(versão de {data})'
+
+
+def texto_dispositivo(texto) -> str:
+    """Tira a aspa de fechamento que sobra do texto da lei alteradora (ex.: art. 90, § 8º termina em ".'")."""
+    texto = limpar(texto)
+    for aspa in ("'", '”'):
+        if texto.endswith(aspa) and texto.count(aspa) % 2 == 1:
+            texto = texto[:-1].rstrip()
+    return texto
+
+
+def _lista(valor) -> list:
+    return valor if isinstance(valor, list) else [valor] if isinstance(valor, dict) else []
+
+
+def montar_dispositivo(no: dict) -> Dispositivo:
+    ident = no.get('legislationIdentifier') or ''
+    chave = ident.split('!', 1)[1].split(',', 1)[0] if '!' in ident else ''
+    versoes = _lista(no.get('workExample'))
+    versao, vigente = versao_vigente(versoes)
+    tipo = str(versao.get('legislationType') or '')
+    rotulo = limpar(versao.get('name')) or next((limpar(v.get('name')) for v in reversed(versoes) if v.get('name')), '')
+    filhos = escolher_por_posicao([montar_dispositivo(f) for f in _lista(no.get('hasPart'))])
+    return Dispositivo(chave=chave, rotulo=rotulo, texto=texto_dispositivo(versao.get('text')),
+                       nota=nota_da_versao(versao, versoes) if vigente else '(sem versão em vigor)',
+                       link=no.get('@id') or '', filhos=filhos, vigente=vigente,
+                       suprimido='Suppression' in tipo and 'Applicability' not in tipo)
+
+
+def escolher_por_posicao(filhos: list) -> list:
+    """A mesma posição pode ter dois nós (ex.: art. 75, XVII inserido por MP depois suprimida e de novo por lei):
+    fica o vigente e não suprimido, na ordem em que a posição aparece."""
+    por_chave: dict = {}
+    for d in filhos:
+        atual = por_chave.get(d.chave)
+        if atual is None or ((atual.suprimido or not atual.vigente) and d.vigente and not d.suprimido):
+            por_chave[d.chave] = d
+    return list(por_chave.values())
+
+
+class Lei:
+    def __init__(self, raiz: Dispositivo, urn: str, nome: str, data_registro: str):
+        self.urn, self.nome, self.data_registro = urn, nome, data_registro
+        self.artigos: dict = {}  # chave do artigo -> (Dispositivo, caminho na estrutura)
+        self._indexar(raiz, [])
+
+    def _indexar(self, d: Dispositivo, caminho: list):
+        if re.fullmatch(r'art\d+(-\d+)?', d.chave):
+            self.artigos.setdefault(d.chave, (d, caminho))
+            return
+        if re.match(r'(prt|liv|tit|cap|sec|sub)\d', d.chave):
+            caminho = caminho + [' - '.join(x for x in (d.rotulo, d.texto) if x)]
+        for f in d.filhos:
+            self._indexar(f, caminho)
+
+    @classmethod
+    def de_json(cls, dados: dict, urn: str, nome: str) -> 'Lei':
+        if not isinstance(dados, dict) or not dados.get('hasPart'):
+            raise FalhaConsulta('a API não trouxe o texto estruturado da lei')
+        raiz = Dispositivo(chave='', rotulo='', texto='', nota='', link='',
+                           filhos=escolher_por_posicao([montar_dispositivo(f) for f in _lista(dados['hasPart'])]))
+        return cls(raiz, urn, nome, _data_br(dados.get('dateModified')))
+
+
+def normalizar_lei(lei: str) -> Optional[str]:
+    """'14133', 'Lei 14.133', 'Lei nº 14.133/2021' ou a URN completa -> '14133', se a lei estiver na tabela."""
+    valor = str(lei or '')
+    if ';' in valor:
+        valor = valor.rsplit(';', 1)[1]
+    m = re.search(r'\d[\d.]*', valor)
+    digitos = m.group(0).replace('.', '') if m else ''
+    return digitos if digitos in LEIS else None
+
+
+def _romano(valor: str) -> Optional[int]:
+    valor = valor.lower()
+    if not valor or any(c not in ROMANOS for c in valor):
+        return None
+    total = 0
+    for i, c in enumerate(valor):
+        n = ROMANOS[c]
+        total += -n if i + 1 < len(valor) and ROMANOS[valor[i + 1]] > n else n
+    return total
+
+
+def _para_romano(n: int) -> str:
+    saida = ''
+    for valor, simbolo in ((100, 'C'), (90, 'XC'), (50, 'L'), (40, 'XL'), (10, 'X'), (9, 'IX'), (5, 'V'),
+                           (4, 'IV'), (1, 'I')):
+        while n >= valor:
+            saida, n = saida + simbolo, n - valor
+    return saida
+
+
+def _numero(valor) -> Optional[int]:
+    valor = re.sub(r'(?i)\b(inciso|inc|par[aá]grafo|§)\b|[\s.º°§ªo]', '', str(valor or ''))
+    return int(valor) if valor.isdigit() else _romano(valor)
+
+
+def chave_artigo(artigo) -> Optional[str]:
+    """'121' -> art121; '184-A' ou '184A' -> art184-1 (a API numera a letra)."""
+    valor = re.sub(r'(?i)^\s*art(igo)?\.?\s*', '', str(artigo or '')).lower().replace('º', '').replace('°', '')
+    m = re.fullmatch(r'\s*(\d+)\s*-?\s*([a-z])?\s*\.?\s*', valor)
+    if not m:
+        return None
+    return f'art{int(m.group(1))}' + (f'-{ord(m.group(2)) - 96}' if m.group(2) else '')
+
+
+def chave_dispositivo(artigo, paragrafo=None, inciso=None, alinea=None) -> Optional[str]:
+    chave = chave_artigo(artigo)
+    if not chave:
+        return None
+    if paragrafo not in (None, ''):
+        if re.search(r'(?i)[uú]nico|^\s*u\s*$', str(paragrafo)):
+            chave += '_par1u'
+        else:
+            n = _numero(paragrafo)
+            if not n:
+                return None
+            chave += f'_par{n}'
+    if inciso not in (None, ''):
+        n = _numero(inciso)
+        if not n:
+            return None
+        chave += ('' if '_par' in chave else '_cpt') + f'_inc{n}'
+    if alinea not in (None, ''):
+        letra = re.sub(r'[^a-z]', '', str(alinea).lower())
+        if len(letra) != 1:
+            return None
+        chave += f'_ali{ord(letra) - 96}'
+    return chave
+
+
+def localizar(d: Dispositivo, chave: str) -> Optional[Dispositivo]:
+    if d.chave == chave:
+        return d
+    for f in d.filhos:
+        achado = localizar(f, chave)
+        if achado:
+            return achado
+    return None
+
+
+def renderizar(d: Dispositivo, nota_herdada: str = '') -> list:
+    """Linhas no formato do texto oficial; o caput sai na mesma linha do rótulo do artigo. A nota que o pai já
+    mostrou (ex.: artigo inteiro incluído por uma lei) não se repete em cada filho."""
+    caput = next((f for f in d.filhos if f.chave.endswith('_cpt')), None)
+    notas = []
+    for nota in (d.nota, caput.nota if caput else ''):
+        if nota and nota != nota_herdada and nota not in notas:
+            notas.append(nota)
+    linhas = [' '.join(p for p in [d.rotulo, caput.texto if caput else d.texto] + notas if p)]
+    herdada = notas[-1] if notas else nota_herdada
+    for f in (caput.filhos if caput else []) + [f for f in d.filhos if f is not caput]:
+        linhas += renderizar(f, herdada)
+    return [l for l in linhas if l]
+
+
+def rotulo_citacao(nome_lei: str, artigo: Dispositivo, alvo: Dispositivo) -> str:
+    partes = [nome_lei, re.sub(r'\.$', '', artigo.rotulo).replace('Art.', 'art.')]
+    for trecho in alvo.chave.split('_')[1:]:
+        if trecho == 'par1u':
+            partes.append('parágrafo único')
+        elif trecho.startswith('par'):
+            partes.append(f'§ {trecho[3:]}º' if int(trecho[3:]) < 10 else f'§ {trecho[3:]}')
+        elif trecho.startswith('inc'):
+            partes.append('inciso ' + _para_romano(int(trecho[3:])))
+        elif trecho.startswith('ali'):
+            partes.append(f'alínea "{chr(96 + int(trecho[3:]))}"')
+    return ', '.join(p for p in partes if p)
+
+
 class Tools:
     class Valves(BaseModel):
         base_url: str = Field(default=f'{PORTAL}/rest/publico', description='API REST da Pesquisa do TCU')
-        user_agent: str = Field(default='servfaz-tcu-tool/0.1 (+contato Servfaz)',
+        user_agent: str = Field(default='servfaz-fontes-oficiais/0.2 (+contato Servfaz)',
                                 description='Identificação honesta do cliente; o firewall do TCU barra UA genérico')
         timeout_s: float = Field(default=20.0, description='Tempo máximo de cada consulta, em segundos')
         max_resultados: int = Field(default=10, description='Itens por página nas buscas')
         max_chars_texto: int = Field(default=12000, description='Limite de cada seção do inteiro teor')
+        normas_url: str = Field(default=f'{NORMAS}/api/public', description='API do normas.leg.br (texto da lei)')
+        cache_horas: float = Field(default=6.0, description='Por quanto tempo a lei baixada fica em cache')
 
     def __init__(self):
         self.valves = self.Valves()
 
     # ---- cliente HTTP -------------------------------------------------------------------------------------
 
-    def _get_sync(self, base: str, endpoint: str, params: dict) -> dict:
-        url = f"{self.valves.base_url.rstrip('/')}/base/{base}/{endpoint}?{urllib.parse.urlencode(params)}"
+    def _baixar_json(self, url: str):
         pedido = urllib.request.Request(url, headers={'User-Agent': self.valves.user_agent,
                                                       'Accept': 'application/json'})
         try:
             with urllib.request.urlopen(pedido, timeout=self.valves.timeout_s) as resposta:
                 corpo = resposta.read().decode('utf-8', 'replace')
         except urllib.error.HTTPError as e:
-            raise FalhaTCU(f'HTTP {e.code}') from e
+            raise FalhaConsulta(f'HTTP {e.code}') from e
         except (urllib.error.URLError, TimeoutError, OSError) as e:
-            raise FalhaTCU(f'rede ou tempo esgotado: {getattr(e, "reason", e)}') from e
+            raise FalhaConsulta(f'rede ou tempo esgotado: {getattr(e, "reason", e)}') from e
         try:
             dados = json.loads(corpo)
         except ValueError as e:
             bloqueio = 'rejeitada' in corpo.lower() or corpo.lstrip().startswith('<')
-            raise FalhaTCU('acesso bloqueado pelo firewall do TCU' if bloqueio else 'resposta inválida') from e
+            raise FalhaConsulta('acesso bloqueado (resposta em HTML)' if bloqueio else 'resposta inválida') from e
+        return dados
+
+    def _get_sync(self, base: str, endpoint: str, params: dict) -> dict:
+        url = f"{self.valves.base_url.rstrip('/')}/base/{base}/{endpoint}?{urllib.parse.urlencode(params)}"
+        try:
+            dados = self._baixar_json(url)
+        except FalhaConsulta as e:
+            if 'HTML' in str(e):
+                raise FalhaConsulta('acesso bloqueado pelo firewall do TCU') from e
+            raise
         if not isinstance(dados, dict) or not isinstance(dados.get('documentos'), list):
-            raise FalhaTCU('resposta em formato inesperado')
+            raise FalhaConsulta('resposta em formato inesperado')
         return dados
 
     async def _consultar(self, base: str, endpoint: str, termo: str, filtro: str = '', quantidade: int = 1,
@@ -121,6 +381,22 @@ class Tools:
             return await asyncio.to_thread(self._get_sync, base, endpoint, params)
         finally:
             await self._status(__event_emitter__, 'Consulta ao TCU concluída', True)
+
+    async def _carregar_lei(self, chave_lei: str, __event_emitter__=None) -> Lei:
+        urn, nome = LEIS[chave_lei]
+        guardada = _CACHE_LEIS.get(urn)
+        if guardada and time.monotonic() - guardada[0] < self.valves.cache_horas * 3600:
+            return guardada[1]
+        await self._status(__event_emitter__, f'Consultando o texto da {nome} (normas.leg.br)…', False)
+        url = (f"{self.valves.normas_url.rstrip('/')}/normas?"
+               f"{urllib.parse.urlencode({'urn': urn, 'tipo_documento': 'maior-detalhe'})}")
+        try:
+            dados = await asyncio.to_thread(self._baixar_json, url)
+            lei = Lei.de_json(dados, urn, nome)
+        finally:
+            await self._status(__event_emitter__, 'Consulta à lei concluída', True)
+        _CACHE_LEIS[urn] = (time.monotonic(), lei)
+        return lei
 
     @staticmethod
     async def _status(emitter, texto: str, fim: bool):
@@ -151,7 +427,7 @@ class Tools:
             dados = await self._consultar('jurisprudencia-selecionada', 'documentosResumidos', tema, '',
                                           self.valves.max_resultados, pagina * self.valves.max_resultados,
                                           __event_emitter__)
-        except FalhaTCU as e:
+        except FalhaConsulta as e:
             return FALHA.format(motivo=e)
         docs = dados['documentos']
         if not docs:
@@ -184,7 +460,7 @@ class Tools:
             else:
                 dados = await self._consultar('sumula', 'documento', termo, '', min(self.valves.max_resultados, 5),
                                               0, __event_emitter__)
-        except FalhaTCU as e:
+        except FalhaConsulta as e:
             return FALHA.format(motivo=e)
         docs = dados['documentos']
         if not docs:
@@ -228,7 +504,7 @@ class Tools:
             dados = await self._consultar('acordao-completo', 'documentosResumidos', consulta, ' '.join(filtros),
                                           self.valves.max_resultados, pagina * self.valves.max_resultados,
                                           __event_emitter__)
-        except FalhaTCU as e:
+        except FalhaConsulta as e:
             return FALHA.format(motivo=e)
         docs = dados['documentos']
         if not docs:
@@ -262,7 +538,7 @@ class Tools:
             filtro += f' COLEGIADO:"{colegiado}"'
         try:
             dados = await self._consultar('acordao-completo', 'documento', '*', filtro, 1, 0, __event_emitter__)
-        except FalhaTCU as e:
+        except FalhaConsulta as e:
             return FALHA.format(motivo=e)
         docs = dados['documentos']
         if not docs:
@@ -286,4 +562,51 @@ class Tools:
             if texto:
                 partes += ['', f'## {titulo}', cortar(texto, maximo)]
         partes += ['', AVISO]
+        return '\n'.join(partes)
+
+    async def obter_dispositivo_lei(self, lei: str, artigo: str, paragrafo: Optional[str] = None,
+                                    inciso: Optional[str] = None, alinea: Optional[str] = None,
+                                    __event_emitter__=None) -> str:
+        """
+        Traz o texto vigente de um artigo (ou parágrafo, inciso, alínea) da Lei 14.133/2021, para transcrever
+        a lei na peça. Use sempre antes de citar ou transcrever um dispositivo: não cite lei de memória.
+        Sem parágrafo, devolve o artigo inteiro; leia todos os incisos antes de concluir.
+        :param lei: "14133" (por enquanto só a Lei 14.133/2021 está disponível).
+        :param artigo: número do artigo, ex.: "121" ou "184-A".
+        :param paragrafo: número do parágrafo (ex.: "3") ou "único".
+        :param inciso: inciso em romanos ou arábicos (ex.: "II" ou "2").
+        :param alinea: letra da alínea (ex.: "a").
+        """
+        chave_lei = normalizar_lei(lei)
+        if not chave_lei:
+            disponiveis = ', '.join(nome for _, nome in LEIS.values())
+            return (f'A consulta de legislação só tem o texto estruturado de: {disponiveis}. Para "{lei}", cite '
+                    'sem aspas e marque "a conferir".')
+        chave = chave_dispositivo(artigo, paragrafo, inciso, alinea)
+        if not chave:
+            return 'Dispositivo inválido: informe o artigo em números (ex.: "121" ou "184-A") e, se quiser, parágrafo, inciso e alínea.'
+        try:
+            texto_lei = await self._carregar_lei(chave_lei, __event_emitter__)
+        except FalhaConsulta as e:
+            return FALHA_LEI.format(motivo=e)
+        artigo_d, caminho = texto_lei.artigos.get(chave.split('_', 1)[0], (None, []))
+        alvo = localizar(artigo_d, chave) if artigo_d else None
+        if not alvo:
+            return (f'Dispositivo não encontrado na {texto_lei.nome}: artigo {artigo}'
+                    + (f', parágrafo {paragrafo}' if paragrafo else '') + (f', inciso {inciso}' if inciso else '')
+                    + (f', alínea {alinea}' if alinea else '') + '. Confira a numeração; não cite de memória.')
+        linhas = renderizar(alvo)
+        if alvo is not artigo_d:
+            caput = next((f for f in artigo_d.filhos if f.chave.endswith('_cpt')), None)
+            contexto = ' '.join(p for p in (artigo_d.rotulo, caput.texto if caput else '') if p)
+            linhas = [contexto, '[…]'] + linhas
+        corpo = '\n'.join(linhas)
+        if len(corpo) > self.valves.max_chars_texto:
+            corpo = (cortar(corpo, self.valves.max_chars_texto)
+                     + '\nPeça um parágrafo ou inciso específico para ler o restante.')
+        partes = [f'## {rotulo_citacao(texto_lei.nome, artigo_d, alvo)}']
+        if caminho:
+            partes.append(f"Localização: {' > '.join(caminho)}")
+        partes += [f'Fonte: normas.leg.br (Congresso Nacional), registro de {texto_lei.data_registro} · '
+                   f'[abrir]({alvo.link or artigo_d.link})', '', corpo, '', AVISO_LEI]
         return '\n'.join(partes)

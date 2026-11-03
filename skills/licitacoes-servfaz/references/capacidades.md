@@ -48,7 +48,7 @@ Só quando a tese depender de precedente; lei clara basta por si.
 Use só depois de a pesquisa do TCU falhar (erro técnico) ou não trazer resultado pertinente, e diga ao analista que está no plano B.
 
 1. Busque primeiro nas fontes oficiais, restringindo o domínio: `site:tcu.gov.br`, `site:lexml.gov.br` (ex.: `site:lexml.gov.br acórdão 964/2012 TCU`). Só depois, se preciso, faça a busca aberta, apenas para achar o número do precedente.
-2. Classifique cada fonte pelo nível de confiança da tabela abaixo, pelo domínio da página aberta, não pelo título do resultado.
+2. Abra a página de cada resultado que for usar (no Open WebUI, `fetch_url`). O trecho do resultado de busca não é fonte aberta: sem abrir, vale no máximo C. Classifique cada fonte pelo nível de confiança da tabela abaixo, pelo domínio da página aberta, não pelo título do resultado. Atribua uma tese a um acórdão só se o texto aberto a ligar a ele.
 3. Confirme número, ano, colegiado e data em fonte de nível A ou B antes de usar o precedente. Divergência entre fontes (ex.: colegiado diferente) é sinal de erro: prevalece a fonte de nível mais alto.
 4. Apresente ao analista cada precedente com o nível e a confiança: `Acórdão N/AAAA-Colegiado (nível B, confiança média: ementa no LexML; inteiro teor a conferir)`.
 5. Na consulta, valem as mesmas regras da pesquisa do TCU: só termos jurídicos, poucas buscas.
@@ -57,8 +57,8 @@ Use só depois de a pesquisa do TCU falhar (erro técnico) ou não trazer result
 
 | Nível | Confiança | Fontes | O que pode ser feito |
 | --- | --- | --- | --- |
-| **A** | Alta | Do próprio TCU, com inteiro teor: `pesquisa.apps.tcu.gov.br`, `contas.tcu.gov.br` (PDF/RTF do acórdão), `sites.tcu.gov.br` (dados abertos), `portal.tcu.gov.br` (súmulas, boletins de jurisprudência) | Citar e transcrever o que foi aberto: `conferido nesta execução` |
-| **B** | Média | Oficial, mas derivada: `lexml.gov.br` (ementa oficial com número, ano, colegiado e data), `licitacoesecontratos.tcu.gov.br` (manual do TCU), outros órgãos públicos que reproduzem o precedente (`.gov.br`, `.jus.br`, `.leg.br`, tribunais de contas estaduais) | Confirmar a existência e citar número e ementa transcrita da página aberta, identificada como ementa; o conteúdo da deliberação fica `a conferir` |
+| **A** | Alta | O próprio acórdão ou súmula, no TCU: `pesquisa.apps.tcu.gov.br`, `contas.tcu.gov.br` (PDF/RTF do acórdão), `sites.tcu.gov.br` (dados abertos) | Citar e transcrever o que foi aberto: `conferido nesta execução` |
+| **B** | Média | Oficial, mas derivada: `lexml.gov.br` (ementa oficial com número, ano, colegiado e data), `licitacoesecontratos.tcu.gov.br` (manual do TCU), outras páginas do `tcu.gov.br` que citam o acórdão (boletins, atas, publicações), outros órgãos públicos que reproduzem o precedente (`.gov.br`, `.jus.br`, `.leg.br`, tribunais de contas estaduais) | Confirmar a existência e citar número e ementa transcrita da página aberta, identificada como ementa; o conteúdo da deliberação fica `a conferir` |
 | **C** | Baixa | Repositórios e editoras jurídicas: `jusbrasil.com.br`, `zenite.blog.br`, `sollicita.com.br`, `jmlgrupo.com.br`, `conlicitacao.com.br` e similares | Só pista para achar o número; confirmar em A ou B; nunca transcrever nem citar como fonte |
 | **D** | Sem garantia | Blogs de escritórios e consultorias, sites gerados por IA, aplicativos, `scribd`, redes sociais, vídeos | Não usar como fonte; no máximo pista de busca. Já houve erro de colegiado em site desse tipo |
 

@@ -96,6 +96,8 @@ class BuscarAcordaos(unittest.TestCase):
             self.assertIn('A = o próprio acórdão em pesquisa.apps.tcu.gov.br', texto)
             self.assertIn('nunca de memória, nem de outro tribunal', texto)
             self.assertIn('O trecho do resultado de busca não é fonte aberta', texto)
+            self.assertIn('na resposta, não mostre as letras', texto)
+            self.assertIn('confiança em palavras (alta, média ou baixa)', texto)
             self.assertIn('licitacoesecontratos.tcu.gov.br', texto.split('B = ')[1].split('C = ')[0])
             self.assertIn('a conferir', texto)
 

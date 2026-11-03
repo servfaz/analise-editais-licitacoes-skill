@@ -2,7 +2,7 @@
 title: Fontes oficiais Servfaz
 description: Pesquisa acórdãos, jurisprudência selecionada e súmulas do TCU e traz o texto vigente da Lei 14.133/2021 para fundamentar impugnações e recursos.
 author: Servfaz
-version: 0.2.2
+version: 0.2.3
 """
 # Import manual em Workspace > Tools; Function Calling = Native no modelo (ver ../INSTALACAO.md).
 # Usa a API REST pública por trás de pesquisa.apps.tcu.gov.br. O firewall do TCU barra User-Agent genérico
@@ -38,9 +38,12 @@ PLANO_B = ('Plano B, se houver busca na web: procure primeiro em fontes oficiais
            'ele conta como "conferido"); B = oficial derivada, como LexML, licitacoesecontratos.tcu.gov.br, outra '
            'página do tcu.gov.br que cita o acórdão ou outro órgão público (confiança média: número e ementa; '
            'inteiro teor a conferir); C = repositório ou editora jurídica (confiança baixa: só pista); D = blog, '
-           'IA ou rede social (não usar). Atribua uma tese a um acórdão só se o texto aberto a ligar a ele (numa '
+           'IA ou rede social (não usar). As letras A a D são só para sua classificação interna: na resposta, não '
+           'mostre as letras; informe a confiança em palavras (alta, média ou baixa) junto de cada precedente, com '
+           'o motivo em linguagem simples (ex.: "confiança média: confirmado em publicação oficial do TCU; texto '
+           'integral do acórdão a conferir"). Atribua uma tese a um acórdão só se o texto aberto a ligar a ele (numa '
            'tabela ou lista, confira a qual acórdão o enunciado pertence). Cite só precedentes que apareceram nas '
-           'fontes abertas, com o nível de cada um; nunca de memória, nem de outro tribunal. Sem nível A, não diga '
+           'fontes abertas, com a confiança de cada um; nunca de memória, nem de outro tribunal. Sem nível A, não diga '
            '"jurisprudência pacífica" nem "consolidada". Sem busca na web, marque o precedente como "a conferir".')
 NENHUM = ('Nenhum resultado na Pesquisa do TCU para esta consulta. Tente frases mais curtas, entre aspas, ou outro '
           'termo. ' + PLANO_B)

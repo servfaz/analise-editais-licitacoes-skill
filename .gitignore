@@ -12,3 +12,6 @@ __pycache__/
 skills/impugnacoes-triagem-workspace/
 # Dados de pessoa física da skill gerar-minuta-impugnacao (modelo em assets/dados-servfaz.exemplo.json)
 skills/gerar-minuta-impugnacao/assets/dados-servfaz.json
+
+# Pacotes gerados das skills (scripts de build)
+dist/

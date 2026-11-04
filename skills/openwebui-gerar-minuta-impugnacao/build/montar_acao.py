@@ -21,7 +21,7 @@ CABECALHO = '''"""
 title: Exportar Minuta de Impugnacao Servfaz
 description: Após confirmação humana, gera o .docx timbrado a partir da minuta aprovada na resposta selecionada.
 author: Servfaz
-version: 2.0.0
+version: 2.1.0
 requirements: python-docx==1.1.2
 """
 # Arquivo gerado por build/montar_acao.py. Não edite à mão.
@@ -90,7 +90,8 @@ def mensagem_alvo(body):
 def ator(user):
     if not isinstance(user, dict) or not user.get('id'):
         raise Refusal('não foi possível identificar o usuário que solicitou a exportação.')
-    # upload_file_handler só necessita destes atributos na criação do arquivo. Não registramos dados do signatário.
+    # upload_file_handler só necessita destes atributos na criação do arquivo. Os dados do signatário ficam fora
+    # dos metadados do arquivo.
     return SimpleNamespace(id=str(user['id']), email=str(user.get('email') or ''),
                            name=str(user.get('name') or user.get('username') or ''),
                            role=str(user.get('role') or 'user'))
@@ -103,8 +104,16 @@ async def avisar(emitter, kind, content):
 
 class Action:
     class Valves(BaseModel):
+        RAZAO_SOCIAL: str = Field('', description='Razão social da Servfaz; preenche [Inserir Razão Social...].')
         CNPJ: str = Field('', description='CNPJ da Servfaz; preenche apenas [Inserir CNPJ].')
         ENDERECO: str = Field('', description='Endereço da Servfaz; preenche [Inserir Endereço] quando existir.')
+        LOCAL: str = Field('', description='Cidade/UF do fecho; preenche [Inserir Local].')
+        REPRESENTANTE_NOME: str = Field('', description='Nome do representante legal; preenche [Inserir Nome do '
+                                                        'Representante] e variações.')
+        REPRESENTANTE_CARGO: str = Field('', description='Cargo do representante; preenche [Inserir Cargo do '
+                                                         'Representante].')
+        REPRESENTANTE_RG: str = Field('', description='RG do representante; preenche [Inserir RG].')
+        REPRESENTANTE_CPF: str = Field('', description='CPF do representante; preenche [Inserir CPF].')
         priority: int = 10
 
     def __init__(self):
@@ -143,7 +152,10 @@ class Action:
             return
 
         try:
-            dados = {'cnpj': self.valves.CNPJ, 'endereco': self.valves.ENDERECO}
+            v = self.valves
+            dados = {'razao_social': v.RAZAO_SOCIAL, 'cnpj': v.CNPJ, 'endereco': v.ENDERECO, 'local': v.LOCAL,
+                     'nome': v.REPRESENTANTE_NOME, 'cargo': v.REPRESENTANTE_CARGO, 'rg': v.REPRESENTANTE_RG,
+                     'cpf': v.REPRESENTANTE_CPF}
             doc, pending = render(markdown, io.BytesIO(base64.b64decode(_TIMBRE_B64)), dados,
                                   label='a minuta selecionada')
             buffer = io.BytesIO()

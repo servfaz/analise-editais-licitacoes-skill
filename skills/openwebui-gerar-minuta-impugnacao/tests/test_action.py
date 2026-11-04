@@ -121,6 +121,47 @@ class ActionTests(unittest.TestCase):
         self.assertEqual(file_event['data']['files'][0]['id'], 'arquivo-123')
         self.assertIn('/api/v1/files/arquivo-123/content', file_event['data']['files'][0]['url'])
 
+    def test_valves_fill_company_and_signatory_fields(self):
+        received = {}
+
+        async def upload_handler(request, file, metadata, process, process_in_background, user):
+            received.update(data=file.file.read(), metadata=metadata)
+            return {'id': 'arquivo-456'}
+
+        module = load_action(upload_handler)
+        events = []
+
+        async def emit(event):
+            events.append(event)
+
+        async def confirm(event):
+            return True
+
+        # Rótulos como saem da Fase 3 (minuta do MPU SP).
+        markdown = ('## IMPUGNAÇÃO AO EDITAL\n\n[Inserir Razão Social da Empresa Impugnante], CNPJ [Inserir CNPJ], '
+                    'sede em [Inserir Endereço Completo], representada por [Inserir Nome do Representante], '
+                    'RG [Inserir RG], CPF [Inserir CPF].\n\n[Inserir Local], [Data do Protocolo].\n\n'
+                    '[Inserir Nome do Representante Legal]\n\n[Inserir Cargo do Representante]\n')
+        valores = {'RAZAO_SOCIAL': 'Empresa Exemplo Ltda.', 'CNPJ': '00.000.000/0001-00', 'ENDERECO': 'Rua Exemplo, 1',
+                   'LOCAL': 'Exemplópolis/UF', 'REPRESENTANTE_NOME': 'Fulana de Tal',
+                   'REPRESENTANTE_CARGO': 'Sócia administradora', 'REPRESENTANTE_RG': '0.000.000-SSP/UF',
+                   'REPRESENTANTE_CPF': '000.000.000-00'}
+        action = module.Action()
+        for nome, valor in valores.items():
+            setattr(action.valves, nome, valor)
+        body = {'id': 'm', 'messages': [{'id': 'm', 'role': 'assistant',
+                                         'content': f'{module.INICIO}\n{markdown}\n{module.FIM}'}]}
+        asyncio.run(action.action(body, __user__={'id': 'usuario-1'}, __request__=object(),
+                                  __event_emitter__=emit, __event_call__=confirm))
+
+        texto = '\n'.join(paragraph.text for paragraph in Document(io.BytesIO(received['data'])).paragraphs)
+        for valor in valores.values():
+            self.assertIn(valor, texto)
+        self.assertNotIn('[Inserir', texto)
+        self.assertIn('[Data do Protocolo]', texto)
+        self.assertNotIn('000.000.000-00', str(received['metadata']))
+        self.assertIn('1 campo(s)', events[-1]['data']['content'])
+
     def test_cancelled_action_never_uploads_a_file(self):
         uploaded = []
 

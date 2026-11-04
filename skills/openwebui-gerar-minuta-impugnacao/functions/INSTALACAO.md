@@ -16,7 +16,7 @@
 3. Copie todo o conteúdo de [gerar_minuta_impugnacao_action.py](gerar_minuta_impugnacao_action.py) para o editor e clique em **Save**.
 4. O Open WebUI reconhece automaticamente a classe `Action`; não é necessário escolher o tipo manualmente.
 5. Ative a Function. Para disponibilizá-la, marque-a como **Global** ou associe-a especificamente ao modelo de impugnações.
-6. Abra as **Valves** (ícone de engrenagem) e, se desejar, preencha somente os dados corporativos `CNPJ` e `ENDERECO`.
+6. Abra as **Valves** (ícone de engrenagem) e preencha os dados da Servfaz (`RAZAO_SOCIAL`, `CNPJ`, `ENDERECO`, `LOCAL`) e do representante legal (`REPRESENTANTE_NOME`, `REPRESENTANTE_CARGO`, `REPRESENTANTE_RG`, `REPRESENTANTE_CPF`). Os marcadores que cada Valve preenche estão no `SKILL.md` do pacote.
 
 A Function declara `python-docx==1.1.2` no seu cabeçalho. Em uma instância de homologação com uma única réplica, o Open WebUI instala essa dependência automaticamente ao salvar ou carregar a Function, desde que `ENABLE_PIP_INSTALL_FRONTMATTER_REQUIREMENTS=true`.
 
@@ -37,7 +37,8 @@ ENABLE_PIP_INSTALL_FRONTMATTER_REQUIREMENTS=False
 - Conceda aos analistas acesso ao modelo que possui a Action habilitada; eles não precisam, e não devem, receber permissão para editar Functions.
 - A Action só aparece como botão abaixo de uma resposta do assistente. Ela não é disparada por um comando de texto e não é chamada automaticamente pelo modelo.
 - O botão pede confirmação antes de criar o arquivo. A peça não é assinada, protocolada ou enviada a terceiros.
-- CNPJ e endereço podem ser preenchidos nas Valves. Nome, RG, CPF, local e data não são guardados nas Valves; marcadores não preenchidos permanecem em amarelo no Word para revisão humana.
+- Dados da empresa e do representante vêm das Valves; a data fica sempre como `[Data do Protocolo]`. Marcadores sem valor permanecem em amarelo no Word para revisão humana.
+- RG e CPF do representante são dados pessoais guardados no banco do Open WebUI: só administradores devem ver as Valves desta Function.
 
 ## Teste de homologação
 
@@ -55,7 +56,7 @@ ENABLE_PIP_INSTALL_FRONTMATTER_REQUIREMENTS=False
 3. Revise o texto e clique em **Exportar Minuta de Impugnação Servfaz**, abaixo da resposta.
 4. Leia o hash mostrado na confirmação e confirme somente se ele corresponde à versão revisada.
 5. O Open WebUI cria um arquivo como `minuta-impugnacao-<hash>.docx` e o anexa à mesma resposta. O cartão do arquivo aparece no início da resposta, acima do conteúdo da minuta; clique nele para abrir ou baixar.
-6. Confirme no Word que o timbre foi preservado e que campos como `[Inserir CPF]` ficaram amarelos. Não use dados pessoais reais na homologação.
+6. Confirme no Word que o timbre foi preservado, que os campos das Valves foram preenchidos e que `[Data do Protocolo]` ficou amarelo. Na homologação, use valores fictícios nas Valves de RG e CPF.
 
 Teste também o cancelamento da confirmação e uma resposta sem o marcador inicial: nos dois casos, nenhum arquivo deve ser gerado.
 

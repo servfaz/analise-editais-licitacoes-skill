@@ -30,7 +30,7 @@ Use depois que o analista revisou o conteúdo resultante da triagem e da redaç�
 
 3. A Action exibe o hash abreviado do Markdown e pede confirmação. Somente após a confirmação ela gera o `.docx` do bloco exatamente como revisado e anexa o arquivo ao chat. O arquivo é guardado no Open WebUI sob o usuário que o gerou; a Action não o envia a terceiros.
 
-4. Diga o nome do arquivo e os campos pendentes, se houver. Campos como `[Inserir Nome]`, `[Inserir RG]`, `[Inserir CPF]`, `[Data do Protocolo]` e `{{CAMPO}}` permanecem destacados em amarelo para preenchimento e conferência manual. Não invente dados de pessoa física nem tente removê-los sem instrução explícita.
+4. Diga o nome do arquivo e os campos pendentes, se houver. Campos sem valor nas Valves, `[Data do Protocolo]` e `{{CAMPO}}` permanecem destacados em amarelo para preenchimento e conferência manual. Não invente dados de pessoa física nem tente removê-los sem instrução explícita.
 
 5. Reforce que o analista continua responsável por revisão final, assinatura e protocolo. Nunca declare que a peça foi assinada, protocolada ou enviada.
 
@@ -53,17 +53,28 @@ Remissões como `[1]` são preservadas. O conversor recusa referências internas
 
 ## Dados corporativos e pendências
 
-Nas Valves da Action, o administrador pode configurar apenas `CNPJ` e `ENDERECO` da Servfaz. Elas preenchem exclusivamente `[Inserir CNPJ]`, `[Inserir Endereço]` e `[Inserir Endereço Completo]` quando esses marcadores existirem.
+Nas Valves da Action, o administrador configura os dados da Servfaz e do representante legal que assina as peças. Cada Valve preenche só os marcadores abaixo; Valve vazia deixa o marcador em amarelo.
 
-Nome, RG, CPF e outros dados do signatário não são armazenados nas Valves da Action ou da Tool legada. Se estiverem no texto como marcadores, ficam destacados para o analista autorizado completar no Word. O mesmo vale para a data, salvo se ela já constar de modo aprovado no Markdown.
+| Valve | Marcadores |
+| --- | --- |
+| `RAZAO_SOCIAL` | `[Inserir Razão Social]`, `[Inserir Razão Social da Empresa]`, `[Inserir Razão Social da Empresa Impugnante]` |
+| `CNPJ` | `[Inserir CNPJ]` |
+| `ENDERECO` | `[Inserir Endereço]`, `[Inserir Endereço Completo]` |
+| `LOCAL` | `[Inserir Local]` |
+| `REPRESENTANTE_NOME` | `[Inserir Nome]`, `[Inserir Representante]`, `[Inserir Representante Legal]`, `[Inserir Nome do Representante]`, `[Inserir Nome do Representante Legal]` |
+| `REPRESENTANTE_CARGO` | `[Inserir Cargo]`, `[Inserir Cargo do Representante]`, `[Inserir Cargo do Representante Legal]` |
+| `REPRESENTANTE_RG` | `[Inserir RG]` |
+| `REPRESENTANTE_CPF` | `[Inserir CPF]` |
+
+RG e CPF do representante são dados pessoais: as Valves ficam no banco do Open WebUI e são visíveis a quem administra Functions. Restrinja esse acesso. Os dados não entram nos metadados do arquivo gerado. A data fica sempre como `[Data do Protocolo]`, para o analista preencher no dia do protocolo.
 
 ## Instalação no Open WebUI 0.12.3
 
 1. Em **Admin Panel > Functions**, crie a Action e cole todo o conteúdo de `functions/gerar_minuta_impugnacao_action.py`. Salve-a como **Exportar Minuta de Impugnacao Servfaz**. O backend precisa ter `python-docx==1.1.2` disponível.
-2. Nas Valves da Action, configure apenas o CNPJ e o endereço corporativos, se desejado.
+2. Nas Valves da Action, configure os dados da Servfaz e do representante legal (tabela acima).
 3. Em **Workspace > Skills**, importe esta pasta ou um ZIP que contenha este `SKILL.md`. Anexe a Skill ao modelo especializado de impugnações.
 4. Restrinja a Function, a Skill e o modelo ao grupo comercial/jurídico. Não conceda a analistas permissão para criar ou editar Tools/Functions.
-5. Gere uma minuta de teste contendo `[Inserir CPF]`; revise a resposta, clique na Action, confirme e confira que o `.docx` chegou como arquivo do chat e que o campo segue amarelo.
+5. Gere uma minuta de teste com os marcadores da tabela; revise a resposta, clique na Action, confirme e confira que o `.docx` chegou como arquivo do chat, com as Valves preenchidas e `[Data do Protocolo]` em amarelo.
 
 A Tool em `tools/gerar_minuta_impugnacao.py` permanece somente como compatibilidade para instalações antigas. Ela entrega um Rich UI e não deve ser vinculada ao modelo de produção.
 

@@ -42,8 +42,12 @@ ALINEA_NUMBERING = 'PecaAlinea'
 MESES = ('janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro',
          'novembro', 'dezembro')
 # Rótulo do "[Inserir ...]" (sem acento, minúsculo) -> chave de dados-servfaz.json.
-CAMPOS = {'cnpj': 'cnpj', 'endereco': 'endereco', 'endereco completo': 'endereco', 'cpf': 'cpf', 'rg': 'rg',
-          'nome': 'nome', 'nome do representante': 'nome', 'representante': 'nome'}
+CAMPOS = {'razao social': 'razao_social', 'razao social da empresa': 'razao_social',
+          'razao social da empresa impugnante': 'razao_social', 'cnpj': 'cnpj', 'endereco': 'endereco',
+          'endereco completo': 'endereco', 'local': 'local', 'cpf': 'cpf', 'rg': 'rg', 'nome': 'nome',
+          'nome do representante': 'nome', 'nome do representante legal': 'nome', 'representante': 'nome',
+          'representante legal': 'nome', 'cargo': 'cargo', 'cargo do representante': 'cargo',
+          'cargo do representante legal': 'cargo'}
 CAMPO = re.compile(r'\[inserir ([^\]\n]+)\]', re.I)
 CAMPO_DATA = re.compile(r'\[data(?: do protocolo| da pe[cç]a)?\]', re.I)
 ITEM = re.compile(r'^\d+\.\s+(.*)$')
@@ -327,7 +331,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('entrada', type=Path, help='minuta aprovada em Markdown')
     parser.add_argument('--saida', type=Path, help='destino (padrão: mesmo nome, .docx)')
-    parser.add_argument('--dados', type=Path, help='JSON opcional com cnpj, endereco, nome, rg e cpf')
+    parser.add_argument('--dados', type=Path, help='JSON opcional com razao_social, cnpj, endereco, local, nome, cargo, rg e cpf')
     parser.add_argument('--data', help='data da peça em AAAA-MM-DD; ausente, permanece em destaque amarelo')
     args = parser.parse_args(argv)
     try:

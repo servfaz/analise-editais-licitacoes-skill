@@ -49,7 +49,7 @@ Use depois que o analista revisou o conteúdo resultante da triagem e da redaç�
 | `**negrito**`, `*itálico*`, `_itálico_` | Formatação de trecho. |
 | `<!-- centralizado -->` … `<!-- /centralizado -->` | Local e data centralizados. |
 
-Remissões como `[1]` são preservadas. O conversor recusa referências internas de triagem (`EXT-`, `INT-`, `NOVA-`, catálogo de fontes), blocos de código, imagens, links Markdown, tags HTML, texto riscado e títulos de níveis 5 ou 6.
+O conversor recusa marcadores de citação do chat (`[1]`, `[1, 2]`, `[1][2]`), que só fazem sentido no painel de fontes da conversa: a referência vai por extenso, como `(Edital, item 13.1, pág. 26)`. Também recusa referências internas de triagem (`EXT-`, `INT-`, `NOVA-`, catálogo de fontes), blocos de código, imagens, links Markdown, tags HTML, texto riscado e títulos de níveis 5 ou 6.
 
 ## Dados corporativos e pendências
 

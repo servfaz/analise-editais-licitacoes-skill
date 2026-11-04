@@ -50,7 +50,7 @@ representada por [Inserir Nome], RG [Inserir RG], CPF [Inserir CPF].
 
 ### I. DA TEMPESTIVIDADE
 
-Conforme o item 13.1 do Edital [1], protocolada em [Data do Protocolo].
+Conforme o item 13.1 do Edital, protocolada em [Data do Protocolo].
 
 1. O **CONHECIMENTO** da impugnação;
 2. No mérito, o **ACOLHIMENTO**:
@@ -89,7 +89,7 @@ class ToolTests(unittest.TestCase):
         textos = [p.text for p in doc.paragraphs]
         self.assertTrue(any('00.000.000/0001-00' in t and 'Rua Exemplo' in t for t in textos))
         self.assertTrue(any('[Inserir Nome]' in t and '[Inserir CPF]' in t for t in textos))
-        self.assertTrue(any('9 de março de 2026' in t and '[1]' in t for t in textos))
+        self.assertTrue(any('9 de março de 2026' in t and 'item 13.1' in t for t in textos))
 
     def test_missing_data_listed_and_highlighted(self):
         resposta = self.tool.gerar_minuta_impugnacao(MARKDOWN)  # sem valves nem data

@@ -81,6 +81,15 @@ class ActionTests(unittest.TestCase):
         with self.assertRaises(module.Refusal):
             module.extrair_minuta(f'{module.INICIO}a{module.FIM}\n{module.INICIO}b{module.FIM}')
 
+    def test_refuses_chat_citation_markers(self):
+        module = load_action(lambda **kwargs: None)
+        for marcador in ('[1]', '[1, 2]', '[1][2]'):
+            with self.assertRaises(module.Refusal) as ctx:
+                module.check_clean(f'Conforme o Anexo XI {marcador}, a rubrica é reembolsável.', 'a minuta')
+            self.assertIn('citação do chat', str(ctx.exception))
+        texto = 'Conforme o Anexo XI (Edital, item 14.11.12, pág. 50), em [Data do Protocolo].'
+        self.assertEqual(module.check_clean(texto, 'a minuta'), texto)
+
     def test_confirmed_action_exports_exact_approved_text_as_native_file(self):
         received = {}
 

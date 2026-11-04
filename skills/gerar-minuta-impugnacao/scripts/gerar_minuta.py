@@ -64,7 +64,10 @@ CENTER_ON, CENTER_OFF = '<!-- centralizado -->', '<!-- /centralizado -->'
 
 # Campo em branco: não barra a geração; sai em destaque no .docx e entra na lista de pendências.
 PENDENTE = re.compile(r'\{\{[^}\n]*\}\}|\[(?:inserir|preencher|informar|data|nome|cnpj|cpf|endere[cç]o)\b[^\]\n]*\]', re.I)
-# Marcação que o conversor não trata. Remissões como [1] passam: vão ao .docx como estão.
+# Marcador de citação do chat do Open WebUI ([1], [1, 2], [1][2]): aponta para o painel de fontes da conversa e não
+# significa nada no .docx. A referência sai por extenso, como (Edital, item 13.1, pág. 26).
+CITACAO_CHAT = re.compile(r'\[\d{1,3}(?:\s*,\s*\d{1,3})*\]')
+# Marcação que o conversor não trata.
 UNSUPPORTED = re.compile(r'^\s*```|^#{5,}\s|!\[[^\]\n]*\]\(|\[[^\]\n]+\]\([^)\n]+\)|</?[a-z][^>\n]*>|~~', re.I)
 
 
@@ -257,7 +260,8 @@ def check_clean(text, label):
     """A trava: a minuta não sai com referência interna da triagem nem marcação que o conversor não trata."""
     problems = []
     for number, line in enumerate(text.split('\n'), 1):
-        for regex, what in ((INTERNAL, 'referência interna'), (UNSUPPORTED, 'marcação que o conversor não trata')):
+        for regex, what in ((INTERNAL, 'referência interna'), (UNSUPPORTED, 'marcação que o conversor não trata'),
+                            (CITACAO_CHAT, 'marcador de citação do chat; use a referência por extenso')):
             found = regex.search(line)
             if found:
                 problems.append(f'linha {number}: {what} "{found[0].strip()}"')

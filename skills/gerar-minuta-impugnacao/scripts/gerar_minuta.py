@@ -1,44 +1,56 @@
 #!/usr/bin/env python3
-"""Converte uma minuta aprovada em Markdown no .docx timbrado da Servfaz.
+"""Gera o .docx da minuta de impugnação a partir de um arquivo Markdown, sobre assets/timbre-servfaz.docx. Python 3.10+.
 
-Este módulo é a fonte canônica do conversor. A Action do Open WebUI e a Tool
-legada incorporam somente o trecho entre os marcadores ``núcleo``. A conversão
-é deliberadamente determinística: não redige, corrige, assina, protocola nem
-envia a peça.
+O Markdown segue as convenções de SKILL.md: "# " e "### " são seções com numeração romana, "## " é o título da peça,
+"#### " e parágrafo todo em negrito são subtítulos, "> " é citação recuada, "1. " é alínea a), b) (com sub-itens "- "
+recuados), tabela "|" é o quadro e <!-- centralizado --> centraliza o fecho. Cada linha não vazia é um parágrafo; linha
+seguida de outra sem linha em branco entre elas sai sem espaço depois (bloco de assinatura). O script para, sem gravar,
+se o texto trouxer referência interna da triagem (ID de fonte,
+marcador [ID · status], catálogo de fontes), marcador de citação do chat ([1], [1, 2]) ou marcação que ele não trata
+(código, imagem, link, HTML, título de nível 5 ou 6). Nada aqui assina, protocola ou envia.
+
+Os campos "[Inserir Razão Social]", "[Inserir CNPJ]", "[Inserir Endereço Completo]", "[Inserir Local]", "[Inserir
+Nome]", "[Inserir Cargo]", "[Inserir RG]" e "[Inserir CPF]" (e variações como "Nome do Representante Legal") são
+preenchidos com os dados da Servfaz e de quem assina, de assets/dados-servfaz.json. "[Data do Protocolo]" é
+preenchido com --data. O que faltar NÃO barra a geração: o marcador vai ao .docx como está, em destaque amarelo, e o
+script lista as pendências para o analista preencher à mão no Word.
+
+O trecho entre os marcadores "núcleo" é incorporado sem alteração na Action do Open WebUI e na Tool legada
+(skills/openwebui-gerar-minuta-impugnacao/build): depois de mudar esse trecho, monte as duas de novo.
 
 Uso:
-  gerar_minuta.py ENTRADA.md [--saida MINUTA.docx] [--dados DADOS.json] [--data AAAA-MM-DD]
+  gerar_minuta.py ENTRADA.md [--saida MINUTA.docx] [--data AAAA-MM-DD]
 """
 import argparse
 import json
 import re
 import sys
 import unicodedata
-from dataclasses import dataclass
+from collections import namedtuple
 from datetime import date
 from pathlib import Path
 
 from docx import Document
-from docx.enum.text import WD_COLOR_INDEX
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Cm, Pt
 
-
 # === núcleo compartilhado: este bloco é incorporado nas integrações Open WebUI ===
+
 class Refusal(Exception):
     """Entrada que não pode virar minuta; a mensagem diz o que corrigir."""
 
 
-# O catálogo de fontes é interno da triagem: nenhum ID, marcador [ID · status] ou menção a ele ou aos arquivos do
-# estudo chega à minuta. "Catálogo" sozinho não conta: um edital pode citar o Catálogo de Serviços.
+# O catálogo de fontes é interno da triagem: nenhum ID, marcador [ID · status] ou menção a ele ou aos arquivos do estudo
+# chega à minuta. "Catálogo" sozinho não conta: um edital pode citar o Catálogo de Serviços.
 INTERNAL = re.compile(r'\b(?:EXT|INT|NOVA)-[A-Z0-9]|\[[^\]\n]*·[^\]\n]*\]|cat[aá]logo[ -]de[ -]fontes|'
                       r'(?:catalogo|indice)-fontes|references/estudo|\b[a-z]+/(?:fontes|analise|estrutura)\.md', re.I)
 
 # Nomes em ASCII: o nome do estilo vira o styleId no XML, e leitores de .docx tropeçam em acento ali.
 STYLES = {'corpo': 'Peca Corpo', 'titulo': 'Peca Titulo', 'subtitulo': 'Peca Subtitulo', 'citacao': 'Peca Citacao',
           'alinea': 'Peca Alinea', 'centro': 'Peca Centro', 'tabela': 'Peca Tabela'}
-ALINEA_NUMBERING = 'PecaAlinea'
+ROMAN_NUMBERING, ALINEA_NUMBERING = 'PecaSecao', 'PecaAlinea'
 MESES = ('janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro',
          'novembro', 'dezembro')
 # Rótulo do "[Inserir ...]" (sem acento, minúsculo) -> chave de dados-servfaz.json.
@@ -52,7 +64,7 @@ CAMPO = re.compile(r'\[inserir ([^\]\n]+)\]', re.I)
 CAMPO_DATA = re.compile(r'\[data(?: do protocolo| da pe[cç]a)?\]', re.I)
 ITEM = re.compile(r'^\d+\.\s+(.*)$')
 BOLD_LINE = re.compile(r'^\*\*[^*]+\*\*$')
-INLINE = re.compile(r'(\*\*.+?\*\*|(?<![\w*])\*(?!\*)[^*]+?\*(?!\*)|(?<![\w*])_(?!_).+?(?<!_)_(?!\w))')
+INLINE = re.compile(r'(\*\*.+?\*\*|(?<![\w*])\*(?!\*)[^*]+?\*(?![\w*])|(?<![\w*])_(?!_).+?(?<!_)_(?!\w))')
 HEADING = re.compile(r'^(#{1,6})\s+(.*)$')
 ROMAN = re.compile(r'^[IVXL]+\.\s+')
 BULLET = re.compile(r'^\s*[-*+]\s+(.*)$')
@@ -61,14 +73,6 @@ MARKER = re.compile(r'^\**[a-z0-9]+\)\**\s')
 SUB_INDENT = Cm(2.25)
 FRONT = re.compile(r'\A---\n.*?\n---\n', re.S)
 CENTER_ON, CENTER_OFF = '<!-- centralizado -->', '<!-- /centralizado -->'
-
-# Campo em branco: não barra a geração; sai em destaque no .docx e entra na lista de pendências.
-PENDENTE = re.compile(r'\{\{[^}\n]*\}\}|\[(?:inserir|preencher|informar|data|nome|cnpj|cpf|endere[cç]o)\b[^\]\n]*\]', re.I)
-# Marcador de citação do chat do Open WebUI ([1], [1, 2], [1][2]): aponta para o painel de fontes da conversa e não
-# significa nada no .docx. A referência sai por extenso, como (Edital, item 13.1, pág. 26).
-CITACAO_CHAT = re.compile(r'\[\d{1,3}(?:\s*,\s*\d{1,3})*\]')
-# Marcação que o conversor não trata.
-UNSUPPORTED = re.compile(r'^\s*```|^#{5,}\s|!\[[^\]\n]*\]\(|\[[^\]\n]+\]\([^)\n]+\)|</?[a-z][^>\n]*>|~~', re.I)
 
 
 def add_text(paragraph, text, **fmt):
@@ -135,10 +139,9 @@ def add_table(doc, lines):
     rows = [row for row in rows if not all(re.fullmatch(r':?-+:?', cell) for cell in row)]
     if not rows or not rows[0]:
         raise Refusal('a tabela Markdown está vazia.')
-    width = len(rows[0])
-    if any(len(row) != width for row in rows):
+    if any(len(row) != len(rows[0]) for row in rows):
         raise Refusal('a tabela Markdown tem linhas com quantidades diferentes de colunas.')
-    table = doc.add_table(rows=len(rows), cols=width)
+    table = doc.add_table(rows=len(rows), cols=len(rows[0]))
     borders = OxmlElement('w:tblBorders')
     for side in ('top', 'left', 'bottom', 'right', 'insideH', 'insideV'):
         edge = OxmlElement(f'w:{side}')
@@ -146,11 +149,11 @@ def add_table(doc, lines):
             edge.set(qn(f'w:{key}'), value)
         borders.append(edge)
     table._tbl.tblPr.append(borders)
-    for row_number, row in enumerate(rows):
-        for column, text in enumerate(row):
-            paragraph = table.cell(row_number, column).paragraphs[0]
+    for r, row in enumerate(rows):
+        for c, text in enumerate(row):
+            paragraph = table.cell(r, c).paragraphs[0]
             paragraph.style = STYLES['tabela']
-            add_runs(paragraph, f'**{text}**' if row_number == 0 and text else text)
+            add_runs(paragraph, f'**{text}**' if r == 0 and text else text)
     header = OxmlElement('w:tblHeader')
     table.rows[0]._tr.get_or_add_trPr().append(header)
     doc.add_paragraph(style=STYLES['corpo'])
@@ -174,12 +177,12 @@ def close_last(items):
 
 def build(doc, text):
     lines = text.split('\n')
-    centered, index = False, 0
+    centered, i = False, 0
     blank = ('', CENTER_ON, CENTER_OFF)
-    while index < len(lines):
-        line = lines[index].strip()
-        following = lines[index + 1].strip() if index + 1 < len(lines) else ''
-        index += 1
+    while i < len(lines):
+        line = lines[i].strip()
+        following = lines[i + 1].strip() if i + 1 < len(lines) else ''
+        i += 1
         if not line or RULE.match(line):
             continue
         if line in (CENTER_ON, CENTER_OFF):
@@ -199,37 +202,36 @@ def build(doc, text):
             continue
         if line.startswith('|'):
             block = [line]
-            while index < len(lines) and lines[index].strip().startswith('|'):
-                block.append(lines[index].strip())
-                index += 1
+            while i < len(lines) and lines[i].strip().startswith('|'):
+                block.append(lines[i].strip())
+                i += 1
             add_table(doc, block)
             continue
         if ITEM.match(line):
             items = [[ITEM.match(line)[1], []]]
-            while index < len(lines):
-                candidate = lines[index]
-                if ITEM.match(candidate.strip()):
-                    items.append([ITEM.match(candidate.strip())[1], []])
-                elif BULLET.match(candidate):
-                    items[-1][1].append(BULLET.match(candidate)[1].strip())
+            while i < len(lines):
+                if ITEM.match(lines[i].strip()):
+                    items.append([ITEM.match(lines[i].strip())[1], []])
+                elif BULLET.match(lines[i]):
+                    items[-1][1].append(BULLET.match(lines[i])[1].strip())
                 else:
                     break
-                index += 1
+                i += 1
             close_last(items)
             num_id = new_list(doc)
             for item, subs in items:
                 number_paragraph(add_runs(doc.add_paragraph(style=STYLES['alinea']), item), num_id)
                 add_sub_items(doc, subs)
             continue
-        if BULLET.match(lines[index - 1]):
-            bullets = [BULLET.match(lines[index - 1])[1].strip()]
-            while index < len(lines) and BULLET.match(lines[index]):
-                bullets.append(BULLET.match(lines[index])[1].strip())
-                index += 1
-            if all(MARKER.match(bullet) for bullet in bullets):
+        if BULLET.match(lines[i - 1]):
+            bullets = [BULLET.match(lines[i - 1])[1].strip()]
+            while i < len(lines) and BULLET.match(lines[i]):
+                bullets.append(BULLET.match(lines[i])[1].strip())
+                i += 1
+            if all(MARKER.match(b) for b in bullets):  # já trazem a), b) digitado: só recuo
                 add_sub_items(doc, bullets)
             else:
-                items = [[bullet, []] for bullet in bullets]
+                items = [[b, []] for b in bullets]
                 close_last(items)
                 num_id = new_list(doc)
                 for item, _ in items:
@@ -244,8 +246,17 @@ def build(doc, text):
             paragraph.paragraph_format.space_after = Pt(0)
 
 
+# Campo em branco: não barra a geração; sai em destaque no .docx e entra na lista de pendências.
+PENDENTE = re.compile(r'\{\{[^}\n]*\}\}|\[(?:inserir|preencher|informar|data|nome|cnpj|cpf|endere[cç]o)\b[^\]\n]*\]', re.I)
+# Marcador de citação do chat do Open WebUI ([1], [1, 2], [1][2]): aponta para o painel de fontes da conversa e não
+# significa nada no .docx. A referência sai por extenso, como (Edital, item 13.1, pág. 26).
+CITACAO_CHAT = re.compile(r'\[\d{1,3}(?:\s*,\s*\d{1,3})*\]')
+# Marcação que o conversor não trata.
+UNSUPPORTED = re.compile(r'^\s*```|^#{5,}\s|!\[[^\]\n]*\]\(|\[[^\]\n]+\]\([^)\n]+\)|</?[a-z][^>\n]*>|~~', re.I)
+
+
 def preencher(text, dados, when=None):
-    """Preenche só os campos que os dados conhecem; os demais permanecem destacados para revisão humana."""
+    """Preenche só os campos "[Inserir ...]" que os dados conhecem e a data; o resto fica para a trava."""
     def campo(match):
         label = unicodedata.normalize('NFKD', match[1]).encode('ascii', 'ignore').decode().lower().strip()
         return dados.get(CAMPOS.get(label)) or match[0]
@@ -257,17 +268,18 @@ def preencher(text, dados, when=None):
 
 
 def check_clean(text, label):
-    """A trava: a minuta não sai com referência interna da triagem nem marcação que o conversor não trata."""
+    """A trava: a minuta não sai com referência interna da triagem nem marcação que o conversor não trata. Cada achado leva a linha, para o analista corrigir o Markdown."""
     problems = []
     for number, line in enumerate(text.split('\n'), 1):
-        for regex, what in ((INTERNAL, 'referência interna'), (UNSUPPORTED, 'marcação que o conversor não trata'),
+        for regex, what in ((INTERNAL, 'referência interna'),
+                            (UNSUPPORTED, 'marcação que o conversor não trata'),
                             (CITACAO_CHAT, 'marcador de citação do chat; use a referência por extenso')):
             found = regex.search(line)
             if found:
                 problems.append(f'linha {number}: {what} "{found[0].strip()}"')
     if problems:
-        extra = f'; e mais {len(problems) - 10}' if len(problems) > 10 else ''
-        raise Refusal(f'{label} não pode sair assim: ' + '; '.join(problems[:10]) + extra +
+        raise Refusal(f'{label} não pode sair assim: ' + '; '.join(problems[:10]) +
+                      (f'; e mais {len(problems) - 10}' if len(problems) > 10 else '') +
                       '. Corrija o Markdown e gere de novo.')
     return text
 
@@ -289,64 +301,59 @@ def render(text, timbre, dados=None, when=None, label='a minuta'):
 
 
 TIMBRE = Path(__file__).resolve().parents[1] / 'assets' / 'timbre-servfaz.docx'
+DADOS = Path(__file__).resolve().parents[1] / 'assets' / 'dados-servfaz.json'
+Resultado = namedtuple('Resultado', 'docx pendentes')
 
 
-@dataclass(frozen=True)
-class Conversion:
-    docx: Path
-    campos_em_branco: list[tuple[int, str]]
-
-
-def load_dados(source):
-    if not source:
-        return {}
-    if isinstance(source, dict):
-        return source
-    path = Path(source)
+def load_dados(path):
+    """Dados padrão da Servfaz e de quem assina; sem o arquivo, nada é preenchido."""
+    path = Path(path)
     if not path.is_file():
         return {}
     try:
-        data = json.loads(path.read_text(encoding='utf-8'))
-    except json.JSONDecodeError as exc:
-        raise Refusal(f'dados inválidos em {path.name}: JSON inválido.') from exc
-    if not isinstance(data, dict):
-        raise Refusal(f'dados inválidos em {path.name}: esperado um objeto JSON.')
-    return {str(key).lower(): str(value) for key, value in data.items() if value is not None}
+        dados = json.loads(path.read_text(encoding='utf-8'))
+    except ValueError as exc:
+        raise Refusal(f'{path.name} não é um JSON válido: {exc}.') from exc
+    if not isinstance(dados, dict) or not all(isinstance(v, str) for v in dados.values()):
+        raise Refusal(f'{path.name} deve ser um objeto com valores em texto (veja dados-servfaz.exemplo.json).')
+    return dados
 
 
 def convert(source, target=None, timbre=TIMBRE, dados=None, when=None):
     source = Path(source)
-    if not source.is_file():
-        raise Refusal(f'arquivo Markdown não encontrado: {source}.')
     if not Path(timbre).is_file():
         raise Refusal(f'timbre não encontrado ({timbre}): gere-o com criar_timbre.py.')
-    if isinstance(when, str):
-        try:
-            when = date.fromisoformat(when)
-        except ValueError as exc:
-            raise Refusal('data inválida: use AAAA-MM-DD.') from exc
-    doc, missing = render(source.read_text(encoding='utf-8'), str(timbre), load_dados(dados), when, source.name)
-    output = Path(target) if target else source.with_suffix('.docx')
-    doc.save(str(output))
-    return Conversion(docx=output, campos_em_branco=missing)
+    doc, pendentes = render(source.read_text(encoding='utf-8'), str(timbre), load_dados(dados or DADOS), when,
+                            source.name)
+    target = Path(target) if target else source.with_suffix('.docx')
+    doc.save(str(target))
+    return Resultado(target, pendentes)
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('entrada', type=Path, help='minuta aprovada em Markdown')
+    parser.add_argument('entrada', type=Path, help='impugnação em Markdown')
     parser.add_argument('--saida', type=Path, help='destino (padrão: mesmo nome, .docx)')
-    parser.add_argument('--dados', type=Path, help='JSON opcional com razao_social, cnpj, endereco, local, nome, cargo, rg e cpf')
-    parser.add_argument('--data', help='data da peça em AAAA-MM-DD; ausente, permanece em destaque amarelo')
+    parser.add_argument('--data', help='data da peça, AAAA-MM-DD, para o campo "[Data do Protocolo]"')
     args = parser.parse_args(argv)
     try:
-        result = convert(args.entrada, args.saida, dados=args.dados, when=args.data)
-    except (OSError, Refusal) as exc:
+        try:
+            when = date.fromisoformat(args.data) if args.data else None
+        except ValueError:
+            raise Refusal(f'data inválida: {args.data} (use AAAA-MM-DD).') from None
+        result = convert(args.entrada, args.saida, when=when)
+    except Refusal as exc:
         print(f'erro: {exc}', file=sys.stderr)
         return 1
-    print(result.docx)
-    if result.campos_em_branco:
-        print('campos pendentes: ' + ', '.join(f'linha {line}: {field}' for line, field in result.campos_em_branco),
+    except OSError as exc:
+        print(f'erro: não foi possível ler ou gravar {exc.filename or "um arquivo da minuta"}: {exc.strerror or exc}.',
               file=sys.stderr)
+        return 1
+    print(result.docx)
+    if result.pendentes:
+        print(f'{len(result.pendentes)} campo(s) em branco, em destaque amarelo no .docx, para preencher à mão:')
+        for number, marker in result.pendentes:
+            print(f'  linha {number} do .md: {marker}')
     return 0
 
 

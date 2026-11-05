@@ -127,6 +127,31 @@ def define_styles(doc, roman_num):
     table.paragraph_format.alignment, table.paragraph_format.space_after = WD_ALIGN_PARAGRAPH.LEFT, Pt(0)
 
 
+# Rodapé: a linha laranja ("Conector reto 9") ficava a 5,2 pt do topo do parágrafo e cortava ao meio o texto
+# "servfazpi | www.servfaz.com.br", que começa em cerca de -2 pt. A linha sobe para acima do texto.
+FOOTER_LINE = 'Conector reto 9'
+LINE_OLD_EMU, LINE_NEW_EMU = '66040', '-114300'
+
+
+def fix_footer(doc):
+    """Sobe a linha do rodapé para acima do texto. Idempotente; devolve quantos ajustes fez."""
+    changed = 0
+    for section in doc.sections:
+        footer = section.footer
+        if footer.is_linked_to_previous:
+            continue
+        root = footer._element
+        for offset in root.xpath(f'.//wp:anchor[wp:docPr/@name="{FOOTER_LINE}"]/wp:positionV/wp:posOffset'):
+            if offset.text == LINE_OLD_EMU:
+                offset.text, changed = LINE_NEW_EMU, changed + 1
+        for line in root.xpath(f'.//*[local-name()="line"][@id="{FOOTER_LINE}"]'):
+            if line.get('from') == '-6pt,5.2pt':
+                line.set('from', '-6pt,-9pt')
+                line.set('to', '518.4pt,-7.8pt')
+                changed += 1
+    return changed
+
+
 def build(origin, out):
     doc = Document(str(origin))
     clear_body(doc)
@@ -139,6 +164,7 @@ def build(origin, out):
     roman = add_abstract(numbering, ROMAN_NUMBERING, 'upperRoman', '%1.', left=567, hanging=567, bold=True)
     add_abstract(numbering, ALINEA_NUMBERING, 'lowerLetter', '%1)', left=709, hanging=357)
     define_styles(doc, add_num(numbering, roman))
+    fix_footer(doc)
     out.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(out))
     return out

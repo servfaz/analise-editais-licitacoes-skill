@@ -10,5 +10,7 @@ files
 __pycache__/
 # Saídas de avaliação da skill impugnacoes-triagem (contêm trechos de editais reais)
 skills/impugnacoes-triagem-workspace/
+# Dados de pessoa física da skill gerar-minuta-impugnacao (modelo em assets/dados-servfaz.exemplo.json)
+skills/gerar-minuta-impugnacao/assets/dados-servfaz.json
 # Pacotes .zip gerados das skills (importados no Open WebUI; não versionar)
 *.zip

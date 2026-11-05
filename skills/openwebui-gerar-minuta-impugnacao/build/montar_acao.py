@@ -21,7 +21,7 @@ CABECALHO = '''"""
 title: Exportar Minuta de Impugnacao Servfaz
 description: Após confirmação humana, gera o .docx timbrado a partir da minuta aprovada na resposta selecionada.
 author: Servfaz
-version: 2.2.0
+version: 2.3.0
 requirements: python-docx==1.1.2
 """
 # Arquivo gerado por build/montar_acao.py. Não edite à mão.

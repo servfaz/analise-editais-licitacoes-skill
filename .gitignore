@@ -10,3 +10,5 @@ files
 __pycache__/
 # Saídas de avaliação da skill impugnacoes-triagem (contêm trechos de editais reais)
 skills/impugnacoes-triagem-workspace/
+# Pacotes .zip gerados das skills (importados no Open WebUI; não versionar)
+*.zip

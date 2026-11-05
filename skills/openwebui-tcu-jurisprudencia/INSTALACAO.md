@@ -30,7 +30,7 @@ Nomes de advogados, interessados e quórum não são devolvidos ao modelo. Todo 
 
 ## Pré-requisitos
 
-- Open WebUI `0.12.3` com acesso de saída a `https://pesquisa.apps.tcu.gov.br` e `https://normas.leg.br` a partir do contêiner.
+- Open WebUI `0.12.3` ou posterior (testada na `0.13.0`) com acesso de saída a `https://pesquisa.apps.tcu.gov.br` e `https://normas.leg.br` a partir do contêiner.
 - Conta com perfil **Admin**.
 - Nenhuma dependência extra: a Tool usa só a biblioteca padrão do Python.
 
@@ -40,7 +40,8 @@ Nomes de advogados, interessados e quórum não são devolvidos ao modelo. Todo 
 2. Cole todo o conteúdo de [tools/tcu_jurisprudencia.py](tools/tcu_jurisprudencia.py) e salve.
 3. Abra as **Valves** (engrenagem) e revise:
    - `user_agent`: identificação honesta do cliente (nome, versão e contato). O firewall do TCU barra identificadores genéricos, como o padrão do `curl`; não disfarce a Tool de navegador.
-   - `timeout_s` (20), `max_resultados` (10) e `max_chars_texto` (12000): ajuste se as respostas ficarem lentas ou longas demais para o modelo. O art. 6º da Lei 14.133 passa de 12 mil caracteres e sai cortado, com orientação para pedir o inciso.
+   - `timeout_s` (15) e `tentativas` (3): tempo máximo de cada tentativa e quantas vezes a consulta é repetida quando a rede ou o tempo falham. A API do TCU às vezes trava sem responder; a nova tentativa costuma resolver. No pior caso, uma consulta leva `timeout_s` × `tentativas` (45 s) antes de a Tool informar a falha técnica.
+   - `max_resultados` (10) e `max_chars_texto` (12000): ajuste se as respostas ficarem longas demais para o modelo. O art. 6º da Lei 14.133 passa de 12 mil caracteres e sai cortado, com orientação para pedir o inciso.
    - `cache_horas` (6): tempo que a lei fica em memória.
    - `base_url` e `normas_url`: mantenha o padrão.
 4. Em **Workspace > Models**, edite o preset de licitações (o que usa a skill `licitacoes-servfaz`):

@@ -6,13 +6,17 @@ O Markdown segue as convenções de SKILL.md: "# " e "### " são seções com nu
 recuados), tabela "|" é o quadro e <!-- centralizado --> centraliza o fecho. Cada linha não vazia é um parágrafo; linha
 seguida de outra sem linha em branco entre elas sai sem espaço depois (bloco de assinatura). O script para, sem gravar,
 se o texto trouxer referência interna da triagem (ID de fonte,
-marcador [ID · status], catálogo de fontes) ou marcação que ele não trata (código, imagem, link, HTML, título de nível
-5 ou 6). Nada aqui assina, protocola ou envia.
+marcador [ID · status], catálogo de fontes), marcador de citação do chat ([1], [1, 2]) ou marcação que ele não trata
+(código, imagem, link, HTML, título de nível 5 ou 6). Nada aqui assina, protocola ou envia.
 
-Os campos "[Inserir CNPJ]", "[Inserir Endereço Completo]", "[Inserir CPF]", "[Inserir RG]" e "[Inserir Nome]" são
+Os campos "[Inserir Razão Social]", "[Inserir CNPJ]", "[Inserir Endereço Completo]", "[Inserir Local]", "[Inserir
+Nome]", "[Inserir Cargo]", "[Inserir RG]" e "[Inserir CPF]" (e variações como "Nome do Representante Legal") são
 preenchidos com os dados da Servfaz e de quem assina, de assets/dados-servfaz.json. "[Data do Protocolo]" é
 preenchido com --data. O que faltar NÃO barra a geração: o marcador vai ao .docx como está, em destaque amarelo, e o
 script lista as pendências para o analista preencher à mão no Word.
+
+O trecho entre os marcadores "núcleo" é incorporado sem alteração na Action do Open WebUI e na Tool legada
+(skills/openwebui-gerar-minuta-impugnacao/build): depois de mudar esse trecho, monte as duas de novo.
 
 Uso:
   gerar_minuta.py ENTRADA.md [--saida MINUTA.docx] [--data AAAA-MM-DD]
@@ -32,6 +36,7 @@ from docx.oxml.ns import qn
 from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Cm, Pt
 
+# === núcleo compartilhado: este bloco é incorporado nas integrações Open WebUI ===
 
 class Refusal(Exception):
     """Entrada que não pode virar minuta; a mensagem diz o que corrigir."""
@@ -46,13 +51,15 @@ INTERNAL = re.compile(r'\b(?:EXT|INT|NOVA)-[A-Z0-9]|\[[^\]\n]*·[^\]\n]*\]|cat[a
 STYLES = {'corpo': 'Peca Corpo', 'titulo': 'Peca Titulo', 'subtitulo': 'Peca Subtitulo', 'citacao': 'Peca Citacao',
           'alinea': 'Peca Alinea', 'centro': 'Peca Centro', 'tabela': 'Peca Tabela'}
 ROMAN_NUMBERING, ALINEA_NUMBERING = 'PecaSecao', 'PecaAlinea'
-TIMBRE = Path(__file__).resolve().parents[1] / 'assets' / 'timbre-servfaz.docx'
-DADOS = Path(__file__).resolve().parents[1] / 'assets' / 'dados-servfaz.json'
 MESES = ('janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro',
          'novembro', 'dezembro')
 # Rótulo do "[Inserir ...]" (sem acento, minúsculo) -> chave de dados-servfaz.json.
-CAMPOS = {'cnpj': 'cnpj', 'endereco': 'endereco', 'endereco completo': 'endereco', 'cpf': 'cpf', 'rg': 'rg',
-          'nome': 'nome', 'nome do representante': 'nome', 'representante': 'nome'}
+CAMPOS = {'razao social': 'razao_social', 'razao social da empresa': 'razao_social',
+          'razao social da empresa impugnante': 'razao_social', 'cnpj': 'cnpj', 'endereco': 'endereco',
+          'endereco completo': 'endereco', 'local': 'local', 'cpf': 'cpf', 'rg': 'rg', 'nome': 'nome',
+          'nome do representante': 'nome', 'nome do representante legal': 'nome', 'representante': 'nome',
+          'representante legal': 'nome', 'cargo': 'cargo', 'cargo do representante': 'cargo',
+          'cargo do representante legal': 'cargo'}
 CAMPO = re.compile(r'\[inserir ([^\]\n]+)\]', re.I)
 CAMPO_DATA = re.compile(r'\[data(?: do protocolo| da pe[cç]a)?\]', re.I)
 ITEM = re.compile(r'^\d+\.\s+(.*)$')
@@ -130,6 +137,10 @@ def number_paragraph(paragraph, num_id):
 def add_table(doc, lines):
     rows = [[cell.strip() for cell in line.strip().strip('|').split('|')] for line in lines]
     rows = [row for row in rows if not all(re.fullmatch(r':?-+:?', cell) for cell in row)]
+    if not rows or not rows[0]:
+        raise Refusal('a tabela Markdown está vazia.')
+    if any(len(row) != len(rows[0]) for row in rows):
+        raise Refusal('a tabela Markdown tem linhas com quantidades diferentes de colunas.')
     table = doc.add_table(rows=len(rows), cols=len(rows[0]))
     borders = OxmlElement('w:tblBorders')
     for side in ('top', 'left', 'bottom', 'right', 'insideH', 'insideV'):
@@ -237,23 +248,11 @@ def build(doc, text):
 
 # Campo em branco: não barra a geração; sai em destaque no .docx e entra na lista de pendências.
 PENDENTE = re.compile(r'\{\{[^}\n]*\}\}|\[(?:inserir|preencher|informar|data|nome|cnpj|cpf|endere[cç]o)\b[^\]\n]*\]', re.I)
-Resultado = namedtuple('Resultado', 'docx pendentes')
-# Marcação que o conversor não trata. Remissões como [1] passam: vão ao .docx como estão.
+# Marcador de citação do chat do Open WebUI ([1], [1, 2], [1][2]): aponta para o painel de fontes da conversa e não
+# significa nada no .docx. A referência sai por extenso, como (Edital, item 13.1, pág. 26).
+CITACAO_CHAT = re.compile(r'\[\d{1,3}(?:\s*,\s*\d{1,3})*\]')
+# Marcação que o conversor não trata.
 UNSUPPORTED = re.compile(r'^\s*```|^#{5,}\s|!\[[^\]\n]*\]\(|\[[^\]\n]+\]\([^)\n]+\)|</?[a-z][^>\n]*>|~~', re.I)
-
-
-def load_dados(path):
-    """Dados padrão da Servfaz e de quem assina; sem o arquivo, nada é preenchido."""
-    path = Path(path)
-    if not path.is_file():
-        return {}
-    try:
-        dados = json.loads(path.read_text(encoding='utf-8'))
-    except ValueError as exc:
-        raise Refusal(f'{path.name} não é um JSON válido: {exc}.') from exc
-    if not isinstance(dados, dict) or not all(isinstance(v, str) for v in dados.values()):
-        raise Refusal(f'{path.name} deve ser um objeto com valores em texto (veja dados-servfaz.exemplo.json).')
-    return dados
 
 
 def preencher(text, dados, when=None):
@@ -273,7 +272,8 @@ def check_clean(text, label):
     problems = []
     for number, line in enumerate(text.split('\n'), 1):
         for regex, what in ((INTERNAL, 'referência interna'),
-                            (UNSUPPORTED, 'marcação que o conversor não trata')):
+                            (UNSUPPORTED, 'marcação que o conversor não trata'),
+                            (CITACAO_CHAT, 'marcador de citação do chat; use a referência por extenso')):
             found = regex.search(line)
             if found:
                 problems.append(f'linha {number}: {what} "{found[0].strip()}"')
@@ -289,19 +289,45 @@ def pendencias(text):
     return [(number, found[0]) for number, line in enumerate(text.split('\n'), 1) for found in PENDENTE.finditer(line)]
 
 
+def render(text, timbre, dados=None, when=None, label='a minuta'):
+    """Markdown -> (Document, pendências). ``timbre`` aceita caminho ou arquivo binário aberto."""
+    text = preencher(unicodedata.normalize('NFC', text), dados or {}, when)
+    check_clean(text, label)
+    text = FRONT.sub('', text, count=1)
+    doc = Document(timbre)
+    build(doc, text)
+    return doc, pendencias(text)
+# === fim do núcleo ===
+
+
+TIMBRE = Path(__file__).resolve().parents[1] / 'assets' / 'timbre-servfaz.docx'
+DADOS = Path(__file__).resolve().parents[1] / 'assets' / 'dados-servfaz.json'
+Resultado = namedtuple('Resultado', 'docx pendentes')
+
+
+def load_dados(path):
+    """Dados padrão da Servfaz e de quem assina; sem o arquivo, nada é preenchido."""
+    path = Path(path)
+    if not path.is_file():
+        return {}
+    try:
+        dados = json.loads(path.read_text(encoding='utf-8'))
+    except ValueError as exc:
+        raise Refusal(f'{path.name} não é um JSON válido: {exc}.') from exc
+    if not isinstance(dados, dict) or not all(isinstance(v, str) for v in dados.values()):
+        raise Refusal(f'{path.name} deve ser um objeto com valores em texto (veja dados-servfaz.exemplo.json).')
+    return dados
+
+
 def convert(source, target=None, timbre=TIMBRE, dados=None, when=None):
     source = Path(source)
-    text = unicodedata.normalize('NFC', source.read_text(encoding='utf-8'))
-    text = preencher(text, load_dados(dados or DADOS), when)
-    check_clean(text, source.name)
-    text = FRONT.sub('', text, count=1)
     if not Path(timbre).is_file():
         raise Refusal(f'timbre não encontrado ({timbre}): gere-o com criar_timbre.py.')
-    doc = Document(str(timbre))
-    build(doc, text)
+    doc, pendentes = render(source.read_text(encoding='utf-8'), str(timbre), load_dados(dados or DADOS), when,
+                            source.name)
     target = Path(target) if target else source.with_suffix('.docx')
     doc.save(str(target))
-    return Resultado(target, pendencias(text))
+    return Resultado(target, pendentes)
 
 
 def main(argv=None):

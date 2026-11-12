@@ -1,0 +1,4 @@
+# Dependências apenas para gerar e validar o pacote localmente.
+# A Function do Open WebUI declara python-docx no cabeçalho YAML próprio.
+python-docx==1.1.2
+packaging==24.2

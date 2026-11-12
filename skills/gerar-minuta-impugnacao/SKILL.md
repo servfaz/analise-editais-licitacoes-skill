@@ -19,6 +19,7 @@ Esta skill só converte. Entra uma impugnação em Markdown já pronta; sai o `.
    ```
 
    Sem `--saida`, o `.docx` fica ao lado do `.md`, com o mesmo nome. O script imprime o caminho gravado.
+
 3. Informe o caminho ao analista. Se o script listou campos em branco, repita a lista (linha do `.md` e marcador) e diga que eles estão em destaque amarelo no `.docx`, para o analista preencher à mão no Word e tirar o destaque. Não invente o dado nem edite o `.docx` por conta própria. Lembre que a revisão, a assinatura e o protocolo são dele, e não diga que a peça foi assinada, protocolada ou enviada.
 
 Precisa de Python 3.10+ e `python-docx` (`scripts/requirements.txt`). Se o script recusar, leia a mensagem ao analista em palavras simples: ela aponta a linha e o que corrigir no Markdown.
@@ -27,22 +28,22 @@ Precisa de Python 3.10+ e `python-docx` (`scripts/requirements.txt`). Se o scrip
 
 O conversor entende o Markdown comum abaixo. O que não está na tabela ou não vira nada ou é recusado (ver "Recusas").
 
-| No Markdown | No .docx |
-| :-- | :-- |
-| Bloco `---` no início (front matter) | Ignorado |
-| Linha `---` no meio do texto | Ignorada |
-| `# TÍTULO` ou `### TÍTULO` | Seção com numeração romana automática (I., II., III...), negrito e caixa alta. Um "I." digitado no início do título é descartado, para não duplicar o número |
-| `## TÍTULO` | Título da peça: centralizado, em negrito, sem número |
-| `#### Título` ou parágrafo todo em `**negrito**` | Subtítulo em negrito, sem número |
-| Parágrafo comum (separado por linha em branco) | Parágrafo justificado, Times New Roman 12,5 pt |
-| Linhas seguidas sem linha em branco | Uma por parágrafo, sem espaço entre elas (bloco de assinatura) |
-| `> texto` | Citação recuada, em itálico |
-| Lista `1.` | Alíneas com numeração automática a), b), c), recomeçando em a) a cada lista; o último item termina em ponto final, mesmo que traga ";" |
-| `- ` recuado logo abaixo de um item `1.` | Sub-item, mais recuado, dentro da mesma lista (o item seguinte continua a numeração). Se o texto já traz "a)" ou "**a)**", ele é mantido; senão entra com "– " |
-| Lista `- ` solta | Alíneas a), b), c); se todos os itens já trazem "a)" digitado, só o recuo |
-| Tabela `\|` | Quadro com bordas; a primeira linha é o cabeçalho, em negrito |
-| `**negrito**`, `*itálico*`, `_itálico_` | Negrito, itálico |
-| `<!-- centralizado -->` … `<!-- /centralizado -->` | Parágrafos centralizados (local e data) |
+| No Markdown                                        | No .docx                                                                                                                                                       |
+| :------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bloco `---` no início (front matter)               | Ignorado                                                                                                                                                       |
+| Linha `---` no meio do texto                       | Ignorada                                                                                                                                                       |
+| `# TÍTULO` ou `### TÍTULO`                         | Seção com numeração romana automática (I., II., III...), negrito e caixa alta. Um "I." digitado no início do título é descartado, para não duplicar o número   |
+| `## TÍTULO`                                        | Título da peça: centralizado, em negrito, sem número                                                                                                           |
+| `#### Título` ou parágrafo todo em `**negrito**`   | Subtítulo em negrito, sem número                                                                                                                               |
+| Parágrafo comum (separado por linha em branco)     | Parágrafo justificado, Times New Roman 12,5 pt                                                                                                                 |
+| Linhas seguidas sem linha em branco                | Uma por parágrafo, sem espaço entre elas (bloco de assinatura)                                                                                                 |
+| `> texto`                                          | Citação recuada, em itálico                                                                                                                                    |
+| Lista `1.`                                         | Alíneas com numeração automática a), b), c), recomeçando em a) a cada lista; o último item termina em ponto final, mesmo que traga ";"                         |
+| `- ` recuado logo abaixo de um item `1.`           | Sub-item, mais recuado, dentro da mesma lista (o item seguinte continua a numeração). Se o texto já traz "a)" ou "**a)**", ele é mantido; senão entra com "– " |
+| Lista `- ` solta                                   | Alíneas a), b), c); se todos os itens já trazem "a)" digitado, só o recuo                                                                                      |
+| Tabela `\|`                                        | Quadro com bordas; a primeira linha é o cabeçalho, em negrito                                                                                                  |
+| `**negrito**`, `*itálico*`, `_itálico_`            | Negrito, itálico                                                                                                                                               |
+| `<!-- centralizado -->` … `<!-- /centralizado -->` | Parágrafos centralizados (local e data)                                                                                                                        |
 
 O timbre (`assets/timbre-servfaz.docx`) traz o cabeçalho e o rodapé com as imagens e a marca d'água, as margens A4, os estilos `Peca ...` e as numerações. Não traz texto de peça.
 
@@ -50,14 +51,17 @@ O timbre (`assets/timbre-servfaz.docx`) traz o cabeçalho e o rodapé com as ima
 
 O script preenche sozinho estes campos do Markdown, com os valores de `assets/dados-servfaz.json`:
 
-| No Markdown | Chave do JSON |
-| :-- | :-- |
-| `[Inserir CNPJ]` | `cnpj` |
-| `[Inserir Endereço Completo]` (ou `[Inserir Endereço]`) | `endereco` |
-| `[Inserir Nome]` (ou `[Inserir Representante]`) | `nome` |
-| `[Inserir RG]` | `rg` |
-| `[Inserir CPF]` | `cpf` |
-| `[Data do Protocolo]` | não vem do JSON: se o analista informar a data, use `--data AAAA-MM-DD` (sai "20 de outubro de 2026") |
+| No Markdown                                                                                                                 | Chave do JSON                                                                                         |
+| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| `[Inserir Razão Social]` (ou `[Inserir Razão Social da Empresa Impugnante]`)                                                | `razao_social`                                                                                        |
+| `[Inserir CNPJ]`                                                                                                            | `cnpj`                                                                                                |
+| `[Inserir Endereço Completo]` (ou `[Inserir Endereço]`)                                                                     | `endereco`                                                                                            |
+| `[Inserir Local]`                                                                                                           | `local`                                                                                               |
+| `[Inserir Nome]` (ou `[Inserir Representante]`, `[Inserir Nome do Representante]`, `[Inserir Nome do Representante Legal]`) | `nome`                                                                                                |
+| `[Inserir Cargo]` (ou `[Inserir Cargo do Representante]`)                                                                   | `cargo`                                                                                               |
+| `[Inserir RG]`                                                                                                              | `rg`                                                                                                  |
+| `[Inserir CPF]`                                                                                                             | `cpf`                                                                                                 |
+| `[Data do Protocolo]`                                                                                                       | não vem do JSON: se o analista informar a data, use `--data AAAA-MM-DD` (sai "20 de outubro de 2026") |
 
 O arquivo tem dado de pessoa física (nome, RG e CPF de quem assina), por isso **não vai para o git**: está no `.gitignore`. O modelo, com valores fictícios, é `assets/dados-servfaz.exemplo.json`. Ao copiar a skill para outra conta ou máquina, copie o `dados-servfaz.json` junto; sem ele, nada é preenchido e todos os campos saem em branco no `.docx`. Não repita CPF, RG nem outro dado do arquivo na conversa. A skill só preenche o que o Markdown marca com `[Inserir ...]`; não acrescenta nome nem dado em lugar nenhum do texto. A data da peça é do analista: não escolha uma. Sem `--data`, o campo da data fica em branco no `.docx`, para o analista preencher.
 
@@ -70,9 +74,14 @@ Dado que falta **não barra a geração**. O que os dados padrão e o `--data` n
 O script não grava o `.docx` e informa a linha de cada achado se o Markdown tiver:
 
 - referência interna da triagem: ID de fonte (`EXT-`, `INT-`, `NOVA-`), marcador `[ID · status]` ou menção a "catálogo de fontes" ou aos arquivos do estudo. "Catálogo" sozinho não conta, porque um edital pode citar o Catálogo de Serviços;
+  <<<<<<< HEAD
 - marcação que o conversor não trata: bloco de código, imagem, link `[texto](url)`, tag HTML, `~~riscado~~` e título de nível 5 ou 6.
 
-Remissões numéricas como `[1]` não são recusadas: vão ao `.docx` exatamente como estão no texto. Se o analista não as quer na peça, ele pede para tirá-las e só então elas saem.
+# Remissões numéricas como `[1]` não são recusadas: vão ao `.docx` exatamente como estão no texto. Se o analista não as quer na peça, ele pede para tirá-las e só então elas saem.
+
+- marcação que o conversor não trata: bloco de código, imagem, link `[texto](url)`, tag HTML, `~~riscado~~` e título de nível 5 ou 6;
+- marcador de citação do chat (`[1]`, `[1, 2]`, `[1][2]`): no Open WebUI ele aponta para o painel de fontes da conversa e não significa nada no `.docx`. Troque cada um pela referência por extenso, como `(Edital, item 13.1, pág. 26)`.
+  > > > > > > > tools/comercial
 
 A correção vai no Markdown de origem, nunca no `.docx`. Dado do certame que falta não se completa por conta própria: deixe em branco no `.docx` e liste para o analista. Ajuste só de marcação (por exemplo, trocar `- a)` por lista) só com o pedido do analista, sem mudar nenhuma palavra do texto.
 

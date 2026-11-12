@@ -15,3 +15,5 @@ skills/gerar-minuta-impugnacao/assets/dados-servfaz.json
 
 # Pacotes gerados das skills (scripts de build)
 dist/
+# Pacotes .zip gerados das skills (importados no Open WebUI; não versionar)
+*.zip

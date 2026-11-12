@@ -208,9 +208,17 @@ class MarkdownComumTests(SemDadosReais, unittest.TestCase):
                     gerar_minuta.convert(path)
                 self.assertFalse(path.with_suffix('.docx').exists(), text)
 
-    def test_numeric_references_pass_through(self):
-        _, doc = self.convert('Conforme o edital [1] e o TR [2, 3].\n')
-        self.assertEqual(doc.paragraphs[-1].text, 'Conforme o edital [1] e o TR [2, 3].')
+    def test_chat_citation_markers_refused(self):
+        """[1], [1, 2] e [1][2] são citações do chat do Open WebUI: a referência vai por extenso."""
+        for marcador in ('[1]', '[2, 3]', '[1][2]'):
+            with tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / 'minuta.md'
+                path.write_text(f'Conforme o edital {marcador}.\n', encoding='utf-8')
+                with self.assertRaisesRegex(Refusal, 'citação do chat'):
+                    gerar_minuta.convert(path)
+                self.assertFalse(path.with_suffix('.docx').exists(), marcador)
+        _, doc = self.convert('Conforme o edital (Edital, item 13.1, pág. 26).\n')
+        self.assertEqual(doc.paragraphs[-1].text, 'Conforme o edital (Edital, item 13.1, pág. 26).')
 
     def test_legal_text_with_brackets_and_comparisons_is_allowed(self):
         self.convert('Índice [sic] inferior a 1,0 e valor < 10 ou > 5; art. 67, § 2º.\n')
@@ -251,6 +259,18 @@ class DadosPadraoTests(unittest.TestCase):
         doc = Document(str(self.result.docx))
         marked = [r.text for p in doc.paragraphs for r in p.runs if r.font.highlight_color == WD_COLOR_INDEX.YELLOW]
         self.assertEqual(marked, ['[Data do Protocolo]'])
+
+    def test_company_and_signatory_labels_from_phase_3(self):
+        """Rótulos que a Fase 3 usa na qualificação e no fecho."""
+        dados = {**DADOS_TESTE, 'razao_social': 'Empresa Exemplo Ltda.', 'local': 'Exemplópolis/UF',
+                 'cargo': 'Sócia administradora'}
+        self.dados.write_text(json.dumps(dados), encoding='utf-8')
+        texts = self.texts('[Inserir Razão Social da Empresa Impugnante], representada por [Inserir Nome do '
+                           'Representante].\n\n[Inserir Local], [Data do Protocolo].\n\n'
+                           '[Inserir Nome do Representante Legal]\n[Inserir Cargo do Representante]\n')
+        self.assertEqual(texts, ['Empresa Exemplo Ltda., representada por Fulana de Tal.',
+                                 'Exemplópolis/UF, [Data do Protocolo].', 'Fulana de Tal', 'Sócia administradora'])
+        self.assertEqual([m for _, m in self.result.pendentes], ['[Data do Protocolo]'])
 
     def test_unknown_field_and_template_marker_are_pending(self):
         self.texts('Telefone [Inserir Telefone] e {{CAMPO}}.\n')

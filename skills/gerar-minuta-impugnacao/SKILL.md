@@ -74,14 +74,8 @@ Dado que falta **não barra a geração**. O que os dados padrão e o `--data` n
 O script não grava o `.docx` e informa a linha de cada achado se o Markdown tiver:
 
 - referência interna da triagem: ID de fonte (`EXT-`, `INT-`, `NOVA-`), marcador `[ID · status]` ou menção a "catálogo de fontes" ou aos arquivos do estudo. "Catálogo" sozinho não conta, porque um edital pode citar o Catálogo de Serviços;
-  <<<<<<< HEAD
-- marcação que o conversor não trata: bloco de código, imagem, link `[texto](url)`, tag HTML, `~~riscado~~` e título de nível 5 ou 6.
-
-# Remissões numéricas como `[1]` não são recusadas: vão ao `.docx` exatamente como estão no texto. Se o analista não as quer na peça, ele pede para tirá-las e só então elas saem.
-
 - marcação que o conversor não trata: bloco de código, imagem, link `[texto](url)`, tag HTML, `~~riscado~~` e título de nível 5 ou 6;
 - marcador de citação do chat (`[1]`, `[1, 2]`, `[1][2]`): no Open WebUI ele aponta para o painel de fontes da conversa e não significa nada no `.docx`. Troque cada um pela referência por extenso, como `(Edital, item 13.1, pág. 26)`.
-  > > > > > > > tools/comercial
 
 A correção vai no Markdown de origem, nunca no `.docx`. Dado do certame que falta não se completa por conta própria: deixe em branco no `.docx` e liste para o analista. Ajuste só de marcação (por exemplo, trocar `- a)` por lista) só com o pedido do analista, sem mudar nenhuma palavra do texto.
 
